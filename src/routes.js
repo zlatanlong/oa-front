@@ -1,5 +1,5 @@
 import Login from "./pages/Login"
-import Index from "./pages/admin/index"
+import Index from "./pages/admin/Index"
 import Products from "./pages/Products"
 import PageNotFound from "./pages/PageNotFound"
 import Routines from "./pages/Routines"
