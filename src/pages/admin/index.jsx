@@ -1,13 +1,6 @@
-import React, { useEffect } from 'react';
-import http from '../../utils/axios';
+import React from 'react';
 
 const Index = () => {
-  useEffect(() => {
-    http.get('/user/test').then(
-      res => { console.log(res) }
-    ).catch(err => { console.log(err) })
-  }, []);
-
 
   return (
     <div>
