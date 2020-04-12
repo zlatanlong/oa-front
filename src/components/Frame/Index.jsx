@@ -1,8 +1,9 @@
-import { Layout, Menu, Breadcrumb, Dropdown, Avatar, message ,Space } from 'antd';
+import { Layout, Menu, Breadcrumb, Dropdown, Avatar, message, Space } from 'antd';
 import { withRouter } from 'dva/router';
-import { DownOutlined, UserOutlined, CarryOutOutlined, TeamOutlined, UserSwitchOutlined, SettingOutlined, LogoutOutlined } from '@ant-design/icons';
+import { connect } from 'dva';
+import { DownOutlined, UserOutlined, CarryOutOutlined, TeamOutlined, UserSwitchOutlined, SettingOutlined, LogoutOutlined, TagsOutlined, SettingTwoTone, SmileOutlined, } from '@ant-design/icons';
 import Logo from '../../assets/yay.jpg';
-import { adminRoutes } from '../../routes';
+import * as routers from '../../routes';
 import style from './frame.css';
 import { clearToken } from '../../utils/authc';
 
@@ -10,13 +11,12 @@ import { clearToken } from '../../utils/authc';
 const { Header, Content, Sider } = Layout;
 const { SubMenu } = Menu;
 
-const routes = adminRoutes.filter(route => route.isShow);
-
-const thingRoutes = routes.filter(route => route.path.indexOf('/admin/thing') === 0)
-const userRoutes = routes.filter(route => route.path.indexOf('/admin/user') === 0)
-const teamRoutes = routes.filter(route => route.path.indexOf('/admin/team') === 0)
-const myRoutes = routes.filter(route => route.path.indexOf('/admin/mine') === 0)
-const testRoutes = routes.filter(route => route.path.indexOf('/admin/test') === 0)
+const thingRoutes = routers.thingRoutes.filter(route => route.isShow && !route.controlled)
+const teamRoutes = routers.teamRoutes.filter(route => route.isShow && !route.controlled)
+const roleRoutes = routers.roleRoutes.filter(route => route.isShow && !route.controlled)
+const tagRoutes = routers.tagRoutes.filter(route => route.isShow && !route.controlled)
+const userOperateRoutes = routers.userOperateRoutes.filter(route => route.isShow && !route.controlled)
+const testRoutes = routers.testRoutes.filter(route => route.isShow && !route.controlled)
 
 
 function Index(props) {
@@ -24,13 +24,20 @@ function Index(props) {
     <Menu onClick={(p) => {
       if (p.key === 'logOut') {
         props.history.push('/login')
+        props.dispatch({
+          type: 'userInfo/save',
+          isLogined: false
+        })
         clearToken()
+      } else if (p.key === 'info') {
+        props.history.push('/u/info')
       } else {
         message.info(p.key)
       }
     }
     }>
       <Menu.Item key='noti'>通知中心</Menu.Item>
+      <Menu.Item key='info'><SmileOutlined />个人信息</Menu.Item>
       <Menu.Item key='setting'><SettingOutlined />设置</Menu.Item>
       <Menu.Item key='logOut'><LogoutOutlined />退出</Menu.Item>
     </Menu >
@@ -57,7 +64,7 @@ function Index(props) {
           <Menu
             mode="inline"
             defaultSelectedKeys={['/admin/thing']}
-            defaultOpenKeys={['sub1']}
+            defaultOpenKeys={['thingRoutes']}
             style={{ height: '100%', borderRight: 0 }}
           >
             {/* {routes.map(route => {
@@ -65,13 +72,13 @@ function Index(props) {
                 <Menu.Item key={route.path} onClick={p => props.history.push(p.key)}>{route.title}</Menu.Item>
               )
             })} */}
-            {/* 事务 */}
+            {/* 事务管理 */}
             <SubMenu
-              key="sub1"
+              key="thingRoutes"
               title={
                 <span>
                   <CarryOutOutlined />
-                    事务
+                    事务管理
                   </span>
               }
             >
@@ -81,29 +88,29 @@ function Index(props) {
                 )
               })}
             </SubMenu>
-            {/* 用户 */}
+            {/* 标签管理 */}
             <SubMenu
-              key="sub2"
+              key="tagRoutes"
               title={
                 <span>
-                  <UserSwitchOutlined />
-                    用户操作
-                  </span>
+                  <TagsOutlined />
+                  标签管理
+                </span>
               }
             >
-              {userRoutes.map(route => {
+              {tagRoutes.map(route => {
                 return (
                   <Menu.Item key={route.path} onClick={p => props.history.push(p.key)}>{route.title}</Menu.Item>
                 )
               })}
             </SubMenu>
-            {/* 小组 */}
+            {/* 小组管理 */}
             <SubMenu
-              key="sub3"
+              key="teamRoutes"
               title={
                 <span>
                   <TeamOutlined />
-                    小组
+                    小组管理
                   </span>
               }
             >
@@ -113,25 +120,41 @@ function Index(props) {
                 )
               })}
             </SubMenu>
-            {/* 个人信息 */}
-            <SubMenu
-              key="sub5"
+            {/* 用户管理 */}
+            {userOperateRoutes.length !== 0 && <SubMenu
+              key="userOperateRoutes"
               title={
                 <span>
-                  <UserOutlined />
-                    我的
+                  <UserSwitchOutlined />
+                    用户管理
                   </span>
               }
             >
-              {myRoutes.map(route => {
+              {userOperateRoutes.map(route => {
                 return (
                   <Menu.Item key={route.path} onClick={p => props.history.push(p.key)}>{route.title}</Menu.Item>
                 )
               })}
-            </SubMenu>
+            </SubMenu>}
+            {/* 角色权限管理 */}
+            {roleRoutes.length !== 0 && <SubMenu
+              key="roleRoutes"
+              title={
+                <span>
+                  <SettingTwoTone />
+                  角色权限管理
+                </span>
+              }
+            >
+              {roleRoutes.map(route => {
+                return (
+                  <Menu.Item key={route.path} onClick={p => props.history.push(p.key)}>{route.title}</Menu.Item>
+                )
+              })}
+            </SubMenu>}
             {/* 测试用 */}
             <SubMenu
-              key="sub4"
+              key="testRoutes"
               title={
                 <span>
                   <UserOutlined />
@@ -169,4 +192,6 @@ function Index(props) {
   )
 }
 
-export default withRouter(Index);
+export default withRouter(
+  connect(({ userInfo }) => ({ userInfo }))(Index)
+);

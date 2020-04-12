@@ -2,15 +2,14 @@ import React from 'react';
 import { connect } from 'dva';
 import Frame from '../components/Frame/Index.jsx';
 import { Route, Switch, Redirect } from 'dva/router';
-import { adminRoutes } from '../routes';
-import { isLogined } from '../utils/authc';
+import { adminRoutes, mainRoutes } from '../routes';
 
 /**
- * admin子路由
+ * 子路由
  * @param {*} props 
  */
-function IndexPage(props) {
-  return (isLogined() ?
+function IndexPage({userInfo}) {
+  return (userInfo.isLogined ?
     <Frame>
       <Switch>
         {adminRoutes.map(route => {
@@ -25,7 +24,8 @@ function IndexPage(props) {
             />
           )
         })}
-        <Redirect to={adminRoutes[0].path} from="/admin" />
+        {/* <Redirect to={mainRoutes[1].path} /> */}
+        <Route path='*' component={mainRoutes[1].component} />
       </Switch>
     </Frame> : <Redirect to='/login' />
   );
@@ -34,4 +34,6 @@ function IndexPage(props) {
 IndexPage.propTypes = {
 };
 
-export default connect()(IndexPage);
+export default connect(
+  ({userInfo}) => ({userInfo})
+)(IndexPage);

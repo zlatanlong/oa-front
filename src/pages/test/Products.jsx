@@ -1,6 +1,6 @@
 import React from 'react';
 import { connect } from 'dva';
-import ProductList from '../components/ProductList';
+import ProductList from '../../components/ProductList';
 
 const Products = ({ dispatch, products }) => {
   function handleDelete(id) {
@@ -52,8 +52,8 @@ const Products = ({ dispatch, products }) => {
 /**
  * 把传递的对象products属性单独拿出来再封装出去,
  * 这个products是根据命名空间区分的
- * 返回值中的小括号是为了消除歧义，参数是解构赋值
- * @param {包含products属性的对象} param0 
+ * 返回值中的小括号是为了消除歧义，参数是解构赋值,返回值是为了此组件拿到
+ * @param {包含products属性的整个dva对象} param0 
  */
 const mapFun = ({ products }) => ({ products })
 //接收一个函数，返回一个函数
