@@ -9,12 +9,9 @@ import http from '../utils/axios';
 
 class Login extends Component {
 
-  constructor(props) {
-    super(props);
-    console.log('props', props);
-  }
 
-  onFinish = values => {
+  
+  login = values => {
     http.post('/user/login', values).then(
       res => {
         if (res.data.code === 0) {
@@ -27,9 +24,13 @@ class Login extends Component {
         }
       }
     ).catch(err => { console.log(err); message.error('未知错误'); })
+  }
+
+  onFinish = values => {
+    this.login()
   };
 
-  saveUserInfoToDva = value =>{
+  saveUserInfoToDva = value => {
     this.props.dispatch({
       type: 'userInfo/save',
       isLogined: true,

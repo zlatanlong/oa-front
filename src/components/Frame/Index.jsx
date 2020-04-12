@@ -1,9 +1,10 @@
 import { Layout, Menu, Breadcrumb, Dropdown, Avatar, message, Space } from 'antd';
+import React, { useEffect, useState } from 'react';
 import { withRouter } from 'dva/router';
 import { connect } from 'dva';
 import { DownOutlined, UserOutlined, CarryOutOutlined, TeamOutlined, UserSwitchOutlined, SettingOutlined, LogoutOutlined, TagsOutlined, SettingTwoTone, SmileOutlined, } from '@ant-design/icons';
 import Logo from '../../assets/yay.jpg';
-import * as routers from '../../routes';
+import { routesGroup } from '../../routes';
 import style from './frame.css';
 import { clearToken } from '../../utils/authc';
 
@@ -11,15 +12,49 @@ import { clearToken } from '../../utils/authc';
 const { Header, Content, Sider } = Layout;
 const { SubMenu } = Menu;
 
-const thingRoutes = routers.thingRoutes.filter(route => route.isShow && !route.controlled)
-const teamRoutes = routers.teamRoutes.filter(route => route.isShow && !route.controlled)
-const roleRoutes = routers.roleRoutes.filter(route => route.isShow && !route.controlled)
-const tagRoutes = routers.tagRoutes.filter(route => route.isShow && !route.controlled)
-const userOperateRoutes = routers.userOperateRoutes.filter(route => route.isShow && !route.controlled)
-const testRoutes = routers.testRoutes.filter(route => route.isShow && !route.controlled)
-
-
 function Index(props) {
+  const [thingRoutes, setThingRoutes] = useState([]);
+  const [teamRoutes, setTeamRoutes] = useState([]);
+  const [roleRoutes, setRoleRoutes] = useState([]);
+  const [tagRoutes, setTagRoutes] = useState([]);
+  const [userOperateRoutes, setUserOperateRoutes] = useState([]);
+  const [testRoutes, setTestRoutes] = useState([]);
+
+  useEffect(() => {
+    let userPermissionUrlSet = [];
+    let permissionSet = [...props.userInfo.info.permissionSet];
+    permissionSet.forEach(
+      permission => {
+        userPermissionUrlSet.push(permission.frontRoute);
+      }
+    );
+    // 从 userPermissionSet 中 解除对应route的受控
+    for (const key in routesGroup) {
+      if (routesGroup.hasOwnProperty(key)) {
+        const routes = routesGroup[key];
+        routes.forEach(
+          route => {
+            if (userPermissionUrlSet.indexOf(route.path) !== -1) {
+              route.controlled = false;
+            }
+          }
+        )
+      }
+    }
+    setThingRoutes(routesGroup.thingRoutes.filter(route => route.isShow && !route.controlled))
+    setTeamRoutes(routesGroup.teamRoutes.filter(route => route.isShow && !route.controlled))
+    setRoleRoutes(routesGroup.roleRoutes.filter(route => route.isShow && !route.controlled))
+    setTagRoutes(routesGroup.tagRoutes.filter(route => route.isShow && !route.controlled))
+    setUserOperateRoutes(routesGroup.userOperateRoutes.filter(route => route.isShow && !route.controlled))
+    setTestRoutes(routesGroup.testRoutes.filter(route => route.isShow && !route.controlled))
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+  
+
+
+
+
+  // 鼠标滑到右上角用户上时候的弹出菜单
   const popMenu = (
     <Menu onClick={(p) => {
       if (p.key === 'logOut') {

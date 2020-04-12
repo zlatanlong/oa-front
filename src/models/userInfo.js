@@ -4,7 +4,7 @@ export default {
   namespace: 'userInfo',
 
   state: {
-    isLogined: true,
+    isLogined: false,
     info: {}
   },
 

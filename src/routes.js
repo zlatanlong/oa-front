@@ -68,14 +68,14 @@ export const teamRoutes = [
     exact: true,
     isShow: true,
     title: '我的小组'
-  },{
+  }, {
     path: '/team/edit',
     component: Index,
     exact: true,
     isShow: true,
     controlled: true,
     title: '创建小组'
-  },{
+  }, {
     path: '/team/createdlist',
     component: Index,
     exact: true,
@@ -93,14 +93,14 @@ export const roleRoutes = [
     isShow: true,
     controlled: true,
     title: '角色列表',
-  },{
+  }, {
     path: '/sys/role/add',
     component: Index,
     exact: true,
     isShow: true,
     controlled: true,
     title: '添加角色'
-  },{
+  }, {
     path: '/sys/role/:id',
     component: Index,
     exact: true,
@@ -117,13 +117,13 @@ export const tagRoutes = [
     exact: true,
     isShow: true,
     title: '我的标签'
-  },{
+  }, {
     path: '/tag/edit/:id',
     component: Index,
     exact: true,
     isShow: true,
     title: '创建标签'
-  },{
+  }, {
     path: '/tag/public/edit/:id',
     component: Index,
     exact: true,
@@ -141,14 +141,14 @@ export const userOperateRoutes = [
     isShow: true,
     controlled: true,
     title: '添加用户'
-  },{
+  }, {
     path: '/user/list',
     component: Index,
     exact: true,
     isShow: true,
     controlled: true,
     title: '所有用户'
-  },{
+  }, {
     path: '/user/edit/:id',
     component: Index,
     exact: true,
@@ -175,19 +175,19 @@ export const testRoutes = [
     exact: true,
     isShow: true,
     title: '投票模块'
-  },{
+  }, {
     path: '/test/products',
     component: Products,
     exact: true,
     isShow: true,
     title: 'products'
-  },{
+  }, {
     path: '/test/routines',
     component: Routines,
     exact: true,
     isShow: true,
     title: 'Routines'
-  },{
+  }, {
     path: '/test/edit',
     component: Edit,
     exact: true,
@@ -205,4 +205,13 @@ export const adminRoutes = [
   ...userRoutes,
   ...testRoutes
 ]
+export const routesGroup = {
+  thingRoutes,
+  teamRoutes,
+  roleRoutes,
+  tagRoutes,
+  userOperateRoutes,
+  userRoutes,
+  testRoutes
+}
 
