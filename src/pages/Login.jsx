@@ -1,24 +1,30 @@
-import { setToken } from '../utils/authc';
 import React, { Component } from 'react';
 import { connect } from 'dva';
 import { Form, Input, Button, Card, message } from 'antd';
 import { UserOutlined, LockOutlined } from '@ant-design/icons';
 import style from './login.css';
 import http from '../utils/axios';
+import { getToken, setToken } from '../utils/authc';
 
 
 class Login extends Component {
 
+  componentDidMount() {
+    let token = getToken()
+    if (token) {
+      this.login(token)
+    }
+  }
 
-  
   login = values => {
     http.post('/user/login', values).then(
       res => {
         if (res.data.code === 0) {
-          setToken(values.number);
           message.success('登录成功');
+          setToken(values);
           this.saveUserInfoToDva(res.data.data);
-          this.props.history.push('/admin');
+          console.log(this.props.history);
+          this.props.history.push('/sys/roles');
         } else {
           message.error(res.data.msg);
         }
@@ -27,7 +33,7 @@ class Login extends Component {
   }
 
   onFinish = values => {
-    this.login()
+    this.login(values)
   };
 
   saveUserInfoToDva = value => {

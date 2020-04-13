@@ -1,19 +1,23 @@
 export function getToken() {
-  return localStorage.getItem('token')
-}
+  let number = localStorage.getItem('number');
+  let password = localStorage.getItem('password');
 
-export function setToken(token) {
-  return localStorage.setItem('token', token)
-}
-
-export function isLogined() {
-  if (localStorage.getItem('token')) {
-    return true;
-  } else {
-    return false;
+  if (number !== null && password !== null) {
+    number = atob(number)
+    password = atob(password)
+    return { number, password }
   }
+  return null;
 }
+
+export function setToken({ number, password }) {
+  localStorage.setItem('number', btoa(number))
+  localStorage.setItem('password', btoa(password))
+}
+
+
 
 export function clearToken() {
-  localStorage.removeItem('token')
+  localStorage.removeItem('number')
+  localStorage.removeItem('password')
 }

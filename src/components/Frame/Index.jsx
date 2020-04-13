@@ -1,4 +1,4 @@
-import { Layout, Menu, Breadcrumb, Dropdown, Avatar, message, Space } from 'antd';
+import { Layout, Menu, Dropdown, Avatar, message, Space } from 'antd';
 import React, { useEffect, useState } from 'react';
 import { withRouter } from 'dva/router';
 import { connect } from 'dva';
@@ -21,35 +21,43 @@ function Index(props) {
   const [testRoutes, setTestRoutes] = useState([]);
 
   useEffect(() => {
-    let userPermissionUrlSet = [];
-    let permissionSet = [...props.userInfo.info.permissionSet];
-    permissionSet.forEach(
-      permission => {
-        userPermissionUrlSet.push(permission.frontRoute);
-      }
-    );
+    // let userPermissionUrlSet = [];
+    // let permissionSet = [...props.userInfo.info.permissionSet];
+    // permissionSet.forEach(
+    //   permission => {
+    //     userPermissionUrlSet.push(permission.frontRoute);
+    //   }
+    // );
     // 从 userPermissionSet 中 解除对应route的受控
-    for (const key in routesGroup) {
-      if (routesGroup.hasOwnProperty(key)) {
-        const routes = routesGroup[key];
-        routes.forEach(
-          route => {
-            if (userPermissionUrlSet.indexOf(route.path) !== -1) {
-              route.controlled = false;
-            }
-          }
-        )
-      }
-    }
-    setThingRoutes(routesGroup.thingRoutes.filter(route => route.isShow && !route.controlled))
-    setTeamRoutes(routesGroup.teamRoutes.filter(route => route.isShow && !route.controlled))
-    setRoleRoutes(routesGroup.roleRoutes.filter(route => route.isShow && !route.controlled))
-    setTagRoutes(routesGroup.tagRoutes.filter(route => route.isShow && !route.controlled))
-    setUserOperateRoutes(routesGroup.userOperateRoutes.filter(route => route.isShow && !route.controlled))
-    setTestRoutes(routesGroup.testRoutes.filter(route => route.isShow && !route.controlled))
-  // eslint-disable-next-line react-hooks/exhaustive-deps
+    // for (const key in routesGroup) {
+    //   if (routesGroup.hasOwnProperty(key)) {
+    //     const routes = routesGroup[key];
+    //     routes.forEach(
+    //       route => {
+    //         if (userPermissionUrlSet.indexOf(route.path) !== -1) {
+    //           route.controlled = false;
+    //         }
+    //       }
+    //     )
+    //   }
+    // }
+    // setThingRoutes(routesGroup.thingRoutes.filter(route => route.isShow && !route.controlled))
+    // setTeamRoutes(routesGroup.teamRoutes.filter(route => route.isShow && !route.controlled))
+    // setRoleRoutes(routesGroup.roleRoutes.filter(route => route.isShow && !route.controlled))
+    // setTagRoutes(routesGroup.tagRoutes.filter(route => route.isShow && !route.controlled))
+    // setUserOperateRoutes(routesGroup.userOperateRoutes.filter(route => route.isShow && !route.controlled))
+    // setTestRoutes(routesGroup.testRoutes.filter(route => route.isShow && !route.controlled))
+
+    // 测试阶段
+    setThingRoutes(routesGroup.thingRoutes.filter(route => route.isShow))
+    setTeamRoutes(routesGroup.teamRoutes.filter(route => route.isShow))
+    setRoleRoutes(routesGroup.roleRoutes.filter(route => route.isShow))
+    setTagRoutes(routesGroup.tagRoutes.filter(route => route.isShow))
+    setUserOperateRoutes(routesGroup.userOperateRoutes.filter(route => route.isShow))
+    setTestRoutes(routesGroup.testRoutes.filter(route => route.isShow))
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
-  
+
 
 
 
@@ -89,7 +97,7 @@ function Index(props) {
           <div>
             <Avatar>U</Avatar>
             <span style={{ color: '#fff', margin: '0 10px' }}>
-              超级管理员 <DownOutlined />
+              {props.userInfo.info.realName} <DownOutlined />
             </span>
           </div>
         </Dropdown>
@@ -102,11 +110,6 @@ function Index(props) {
             defaultOpenKeys={['thingRoutes']}
             style={{ height: '100%', borderRight: 0 }}
           >
-            {/* {routes.map(route => {
-              return (
-                <Menu.Item key={route.path} onClick={p => props.history.push(p.key)}>{route.title}</Menu.Item>
-              )
-            })} */}
             {/* 事务管理 */}
             <SubMenu
               key="thingRoutes"
@@ -206,11 +209,6 @@ function Index(props) {
           </Menu>
         </Sider>
         <Layout style={{ padding: '0 16px 16px' }}>
-          <Breadcrumb style={{ margin: '16px 0' }}>
-            <Breadcrumb.Item>Home</Breadcrumb.Item>
-            <Breadcrumb.Item>List</Breadcrumb.Item>
-            <Breadcrumb.Item>App</Breadcrumb.Item>
-          </Breadcrumb>
           <Content
             className="site-layout-background"
             style={{

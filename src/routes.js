@@ -7,6 +7,8 @@ import Edit from "./pages/test/Edit"
 import UserAdd from "./pages/user/UserAdd"
 import Vote from "./pages/test/Vote"
 import UserInfo from './pages/personal/UserInfo';
+import RoleList from "./pages/role/RoleList"
+import Role from "./pages/role/Role"
 
 export const mainRoutes = [
   {
@@ -88,7 +90,7 @@ export const teamRoutes = [
 export const roleRoutes = [
   {
     path: '/sys/roles',
-    component: Index,
+    component: RoleList,
     exact: true,
     isShow: true,
     controlled: true,
@@ -102,7 +104,7 @@ export const roleRoutes = [
     title: '添加角色'
   }, {
     path: '/sys/role/:id',
-    component: Index,
+    component: Role,
     exact: true,
     isShow: false,
     controlled: true,

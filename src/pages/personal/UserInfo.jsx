@@ -2,7 +2,6 @@ import React, { useState, useEffect } from 'react';
 import { connect } from 'dva';
 import http from '../../utils/axios.js';
 import { Descriptions, Tag } from 'antd';
-// import { encode, decode } from 'base64';
 
 const UserInfo = ({ dispatch }) => {
   const [userInfo, setUserInfo] = useState({});
