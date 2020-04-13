@@ -1,10 +1,14 @@
 import React from 'react';
+import { Result, Button } from 'antd';
 
-const PageNotFound = () => {
+const PageNotFound = (props) => {
   return (
-    <div>
-      404
-    </div>
+    <Result
+      status="404"
+      title="404"
+      subTitle="页面压根就没有."
+      extra={<Button type="primary" onClick={() => props.history.push('/')}>返回主页</Button>}
+    />
   );
 }
 

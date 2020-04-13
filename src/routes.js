@@ -94,14 +94,7 @@ export const roleRoutes = [
     exact: true,
     isShow: true,
     controlled: true,
-    title: '角色列表',
-  }, {
-    path: '/sys/role/add',
-    component: Index,
-    exact: true,
-    isShow: true,
-    controlled: true,
-    title: '添加角色'
+    title: '角色管理',
   }, {
     path: '/sys/role/:id',
     component: Role,

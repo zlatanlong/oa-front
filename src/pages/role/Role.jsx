@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
-import { Card, Tag, message } from 'antd';
+import { Card, Tag, message, Button } from 'antd';
+import { PlusOutlined, CloseOutlined } from '@ant-design/icons';
 import http from '../../utils/axios';
 import style from './roleList.css';
 
@@ -99,24 +100,35 @@ const Role = (props) => {
 
   return (
     <div>
-      <Card title={'当前角色: ' + roleName} className={style.myCard}>
-        {rolePermissions.map(permission => {
-          if (permission.frontRoute.indexOf('/sys/role') !== -1) {
-            return (<Tag key={permission.id} color='red' className={style.myTag} >{permission.permissionName}</Tag>)
-          }
-          return (<Tag key={permission.id} color='processing' className={style.myTag} onClick={() => handleDelPerm(permission)}>- {permission.permissionName}</Tag>)
-        })}
-      </Card>
-      <Card title='可选权限' className={style.myCard}>
-        {allPermissions.map(permission => {
-          if (permission.frontRoute.indexOf('/sys/role') !== -1) {
-            return (<Tag key={permission.id} color='red' className={style.myTag} >{permission.permissionName}</Tag>)
-          }
-          return (<Tag key={permission.id} color='purple' className={style.myTag} onClick={() => handleAddPerm(permission)}>+ {permission.permissionName}</Tag>)
-        })}
-      </Card>
+      <Button onClick={() => { props.history.go(-1) }}>返回</Button>
+      <div className={style.cardsWrapper}>
+        <RoleCard title={'当前角色: ' + roleName} permissionList={rolePermissions} icon={<CloseOutlined />} handleClick={handleDelPerm} color='green' />
+        <RoleCard title={'可选权限'} permissionList={allPermissions} icon={<PlusOutlined />} handleClick={handleAddPerm} color='purple' />
+      </div >
     </div>
   );
 }
+
+/**
+ * title: 标题
+ * permissionList 对应的权限列表
+ * icon: 每个权限前面的icon
+ * handleClick(permission): 点击后的回调函数,permissiond对应permissionList的一个元素
+ * color: 颜色
+ * @param {*} props 
+ */
+const RoleCard = ({ title, permissionList, icon, handleClick, color }) => {
+  return (
+    <Card title={title} className={style.myCard}>
+      {permissionList.map(permission => {
+        if (permission.frontRoute.indexOf('/sys/role') !== -1) {
+          return (<Tag key={permission.id} color='red' className={style.myTag}>{permission.permissionName}</Tag>)
+        }
+        return (<Tag key={permission.id} icon={icon} color={color} className={style.myTag} onClick={() => handleClick(permission)}>{permission.permissionName}</Tag>)
+      })}
+    </Card>
+  );
+}
+
 
 export default Role;
