@@ -3,7 +3,7 @@ import { connect } from 'dva';
 import http from '../../utils/axios.js';
 import { Descriptions, Tag } from 'antd';
 
-const UserInfo = ({ dispatch }) => {
+const PersonalInfo = ({ dispatch }) => {
   const [userInfo, setUserInfo] = useState({});
   useEffect(() => {
     http.post('/user').then(
@@ -44,4 +44,4 @@ const UserInfo = ({ dispatch }) => {
 
 export default connect(
   ({ userInfo }) => ({ userInfo })
-)(UserInfo);
+)(PersonalInfo);

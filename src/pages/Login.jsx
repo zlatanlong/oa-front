@@ -24,7 +24,7 @@ class Login extends Component {
           setToken(values);
           this.saveUserInfoToDva(res.data.data);
           console.log(this.props.history);
-          this.props.history.push('/sys/roles');
+          this.props.history.push('/u/info');
         } else {
           message.error(res.data.msg);
         }

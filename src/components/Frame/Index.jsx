@@ -87,7 +87,7 @@ function Index(props) {
   );
 
   return (
-    <Layout style={{ height: "100%" }}>
+    <Layout style={{ minHeight: "100%" }}>
       <Header className={style.header}>
         <Space>
           <img src={Logo} alt="logo" style={{ width: "100px" }} />
@@ -107,7 +107,7 @@ function Index(props) {
           <Menu
             mode="inline"
             defaultSelectedKeys={['/admin/thing']}
-            defaultOpenKeys={['thingRoutes']}
+            defaultOpenKeys={['teamRoutes','userOperateRoutes']}
             style={{ height: '100%', borderRight: 0 }}
           >
             {/* 事务管理 */}

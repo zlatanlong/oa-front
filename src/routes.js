@@ -6,9 +6,15 @@ import Routines from "./pages/test/Routines"
 import Edit from "./pages/test/Edit"
 import UserAdd from "./pages/user/UserAdd"
 import Vote from "./pages/test/Vote"
-import UserInfo from './pages/personal/UserInfo';
+import PersonalInfo from './pages/personal/PersonalInfo';
 import RoleList from "./pages/role/RoleList"
 import Role from "./pages/role/Role"
+import UserList from "./pages/user/UserList"
+import TeamEdit from "./pages/team/TeamEdit"
+import TeamJoined from "./pages/team/TeamJoined"
+import TeamCreated from "./pages/team/TeamCreated"
+import UserEdit from "./pages/user/UserEdit"
+import TeamInfo from "./pages/team/TeamInfo"
 
 export const mainRoutes = [
   {
@@ -65,25 +71,30 @@ export const thingRoutes = [
 
 export const teamRoutes = [
   {
-    path: '/team/list',
-    component: Index,
+    path: '/team/joinedList',
+    component: TeamJoined,
     exact: true,
     isShow: true,
     title: '我的小组'
   }, {
     path: '/team/edit',
-    component: Index,
+    component: TeamEdit,
     exact: true,
     isShow: true,
     controlled: true,
     title: '创建小组'
   }, {
     path: '/team/createdlist',
-    component: Index,
+    component: TeamCreated,
     exact: true,
     isShow: true,
     controlled: true,
     title: '已创建小组列表'
+  },{
+    path: '/team/info/:id',
+    component: TeamInfo,
+    exact: true,
+    isShow: false,
   },
 ]
 
@@ -138,14 +149,14 @@ export const userOperateRoutes = [
     title: '添加用户'
   }, {
     path: '/user/list',
-    component: Index,
+    component: UserList,
     exact: true,
     isShow: true,
     controlled: true,
     title: '所有用户'
   }, {
     path: '/user/edit/:id',
-    component: Index,
+    component: UserEdit,
     exact: true,
     isShow: false,
     controlled: true,
@@ -156,7 +167,7 @@ export const userOperateRoutes = [
 export const userRoutes = [
   {
     path: '/u/info',
-    component: UserInfo,
+    component: PersonalInfo,
     exact: true,
     isShow: false,
     title: '个人信息'
