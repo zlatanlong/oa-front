@@ -1,41 +1,32 @@
 import React, { useState, useRef } from 'react';
-import { Card, Table, Form, Input, Button, Radio, Row, Col } from 'antd';
-import http from '../../utils/axios';
-import { userColomns } from '../../utils/table-columns';
+import {
+  Card,
+  Table,
+  Form,
+  Input,
+  Button,
+  Radio,
+  Row,
+  Col,
+  Divider
+} from 'antd';
+import http from '../utils/axios';
+import { userColomns } from '../utils/table-columns';
 
-const UserList = props => {
+const UserSearchResult = props => {
   const pageCurrent = useRef(1);
   const pageSize = useRef(10);
   const [pageTotal, setPageTotal] = useState(0);
   const [form] = Form.useForm();
   const [queryData, setQueryData] = useState({});
   const [pageData, setPageData] = useState([]);
-
+  const [selectedRowKeys, setSelectedRowKeys] = useState([]);
   const identityOptions = [
     { name: '学生', value: 0 },
     { name: '老师', value: 1 },
     { name: '院长', value: 2 }
   ];
-  const columns = [
-    ...userColomns,
-    {
-      title: '操作',
-      render: (txt, record, index) => {
-        return (
-          <div>
-            <Button
-              type='primary'
-              size='small'
-              onClick={() => {
-                props.history.push(`/user/edit/${record.id}`);
-              }}>
-              修改
-            </Button>
-          </div>
-        );
-      }
-    }
-  ];
+  const columns = [...userColomns];
 
   const getPageData = queryData => {
     http
@@ -69,6 +60,14 @@ const UserList = props => {
     { name: 'majorName', label: '专业' },
     { name: 'className', label: '班级' }
   ];
+
+  const rowSelection = {
+    selectedRowKeys,
+    onChange: selectedRowKeys => {
+      setSelectedRowKeys(selectedRowKeys);
+      props.getSelectIDs(selectedRowKeys);
+    }
+  };
 
   return (
     <div>
@@ -123,6 +122,18 @@ const UserList = props => {
         </Form>
       </Card>
       <Card>
+        已选中 <span style={{ color: 'blue' }}>{selectedRowKeys.length}</span>{' '}
+        人。
+        <Button
+          onClick={() => {
+            setSelectedRowKeys([]);
+            props.getSelectIDs([]);
+          }}
+          type='link'
+          style={{ float: 'right' }}>
+          清除已选
+        </Button>
+        <Divider />
         <Table
           pagination={{
             total: pageTotal,
@@ -141,10 +152,11 @@ const UserList = props => {
           columns={columns}
           dataSource={pageData}
           rowKey={row => row.id}
+          rowSelection={rowSelection}
         />
       </Card>
     </div>
   );
 };
 
-export default UserList;
+export default UserSearchResult;

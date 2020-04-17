@@ -4,8 +4,7 @@ import { PlusOutlined, CloseOutlined } from '@ant-design/icons';
 import http from '../../utils/axios';
 import style from './roleList.css';
 
-
-const Role = (props) => {
+const Role = props => {
   const [roleName, setRoleName] = useState('');
   const [rolePermissions, setRolePermissions] = useState([]);
   const [allPermissions, setAllPermissions] = useState([]);
@@ -20,7 +19,7 @@ const Role = (props) => {
   };
   useEffect(() => {
     Promise.all([getRole(), getPermissions()])
-      .then((res) => {
+      .then(res => {
         let roleRes = res[0];
         let permissionsRes = res[1];
         if (roleRes.data.code === 0 && permissionsRes.data.code === 0) {
@@ -34,25 +33,26 @@ const Role = (props) => {
                 tempPerms.splice(i, 1);
                 i--;
               }
-            })
+            });
           }
-          setRoleName(roleRes.data.data.roleName)
-          setRolePermissions(rolePerms)
-          setAllPermissions(tempPerms)
+          setRoleName(roleRes.data.data.roleName);
+          setRolePermissions(rolePerms);
+          setAllPermissions(tempPerms);
         }
-      }
-      ).catch((err) => { console.log(err) })
+      })
+      .catch(err => {
+        console.log(err);
+      });
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  const handleDelPerm = (permission) => {
-    http.post('/role/delPermission',
-      {
-        "roleId": props.match.params.id,
-        "permissionId": permission.id
-      }
-    ).then(
-      res => {
+  const handleDelPerm = permission => {
+    http
+      .post('/role/delPermission', {
+        roleId: props.match.params.id,
+        permissionId: permission.id
+      })
+      .then(res => {
         if (res.data.code === 0) {
           // 把权限信息加入可选权限
           setAllPermissions([...allPermissions, permission]);
@@ -66,19 +66,20 @@ const Role = (props) => {
           }
           setRolePermissions([...rolePermissions]);
 
-          message.success('删除成功!')
+          message.info('删除成功!');
         }
-      }
-    ).catch(err => { console.log(err) })
-  }
-  const handleAddPerm = (permission) => {
-    http.post('/role/addPermission',
-      {
-        "roleId": props.match.params.id,
-        "permissionId": permission.id
-      }
-    ).then(
-      res => {
+      })
+      .catch(err => {
+        console.log(err);
+      });
+  };
+  const handleAddPerm = permission => {
+    http
+      .post('/role/addPermission', {
+        roleId: props.match.params.id,
+        permissionId: permission.id
+      })
+      .then(res => {
         if (res.data.code === 0) {
           // 把权限信息加入当前角色
           setRolePermissions([...rolePermissions, permission]);
@@ -92,22 +93,41 @@ const Role = (props) => {
           }
           setAllPermissions([...allPermissions]);
 
-          message.success('添加成功!')
+          message.success('添加成功!');
         }
-      }
-    ).catch(err => { console.log(err) })
-  }
+      })
+      .catch(err => {
+        console.log(err);
+      });
+  };
 
   return (
     <div>
-      <Button onClick={() => { props.history.go(-1) }}>返回</Button>
+      <Button
+        onClick={() => {
+          props.history.go(-1);
+        }}>
+        返回
+      </Button>
       <div className={style.cardsWrapper}>
-        <RoleCard title={'当前角色: ' + roleName} permissionList={rolePermissions} icon={<CloseOutlined />} handleClick={handleDelPerm} color='green' />
-        <RoleCard title={'可选权限'} permissionList={allPermissions} icon={<PlusOutlined />} handleClick={handleAddPerm} color='purple' />
-      </div >
+        <RoleCard
+          title={'当前角色: ' + roleName}
+          permissionList={rolePermissions}
+          icon={<CloseOutlined />}
+          handleClick={handleDelPerm}
+          color='green'
+        />
+        <RoleCard
+          title={'可选权限'}
+          permissionList={allPermissions}
+          icon={<PlusOutlined />}
+          handleClick={handleAddPerm}
+          color='purple'
+        />
+      </div>
     </div>
   );
-}
+};
 
 /**
  * title: 标题
@@ -115,20 +135,32 @@ const Role = (props) => {
  * icon: 每个权限前面的icon
  * handleClick(permission): 点击后的回调函数,permissiond对应permissionList的一个元素
  * color: 颜色
- * @param {*} props 
+ * @param {*} props
  */
 const RoleCard = ({ title, permissionList, icon, handleClick, color }) => {
   return (
     <Card title={title} className={style.myCard}>
       {permissionList.map(permission => {
         if (permission.frontRoute.indexOf('/sys/role') !== -1) {
-          return (<Tag key={permission.id} color='red' className={style.myTag}>{permission.permissionName}</Tag>)
+          return (
+            <Tag key={permission.id} color='red' className={style.myTag}>
+              {permission.permissionName}
+            </Tag>
+          );
         }
-        return (<Tag key={permission.id} icon={icon} color={color} className={style.myTag} onClick={() => handleClick(permission)}>{permission.permissionName}</Tag>)
+        return (
+          <Tag
+            key={permission.id}
+            icon={icon}
+            color={color}
+            className={style.myTag}
+            onClick={() => handleClick(permission)}>
+            {permission.permissionName}
+          </Tag>
+        );
       })}
     </Card>
   );
-}
-
+};
 
 export default Role;

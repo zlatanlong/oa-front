@@ -9,7 +9,7 @@ export default {
       { name: 'dva', id: 1 },
       { name: 'antd', id: 2 },
       { name: 'umi', id: 3 },
-      { name: 'hhh', id: 4 },
+      { name: 'hhh', id: 4 }
     ],
     cnode: {}
   },
@@ -17,11 +17,11 @@ export default {
   reducers: {
     // 每一个行为的第一个参数是dva管理的是数据
     // 后面的参数是action
-    'delete'(state, { payload: id }) {
+    delete(state, { payload: id }) {
       // 这么写相当于数组中删除为指定id的
-      console.log(state.data.filter(item => item.id !== id))
+      console.log(state.data.filter(item => item.id !== id));
       const newData = state.data.filter(item => item.id !== id);
-      return { ...state, data: newData }
+      return { ...state, data: newData };
     },
     setName(state, action) {
       return { ...state, name: action.data.name };
@@ -36,44 +36,40 @@ export default {
    */
   effects: {
     /**
-     * 
+     *
      * @param {payload} param0 payload是dispatch传递的action
      * @param {put, call} param1 put的参数是一个新的action, call是call一个接口
      */
     *setNameAsync({ data }, { put, call }) {
       const newAction = {
         type: 'setName',
-        data: data,
-      }
-      yield put(newAction)
+        data: data
+      };
+      yield put(newAction);
     },
-    * testCnode(action, { put, call }) {
-      let rel = yield call(service.testCnode)
+    *testCnode(action, { put, call }) {
+      let rel = yield call(service.testCnode);
       if (rel.data) {
         yield put({
           type: 'setCnode',
-          data: rel.data,
-        })
+          data: rel.data
+        });
       }
-      console.log(rel)
+      console.log(rel);
     }
-
   },
   subscriptions: {
     /**
-     * 
+     *
      * @param {*} param0 dispatch就是它，可以传action，history可以判断路由
      */
     testProducts({ dispatch, history }) {
-      history.listen(
-        (canshu) => {
-          console.log(canshu)
-          if (canshu.pathname === '/products') {
-            console.log('hahah')
-          }
+      history.listen(canshu => {
+        // console.log(canshu)
+        if (canshu.pathname === '/products') {
+          console.log('hahah');
         }
-      )
+      });
     }
   }
-
 };
