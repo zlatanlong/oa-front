@@ -20,8 +20,8 @@ const Role = props => {
   useEffect(() => {
     Promise.all([getRole(), getPermissions()])
       .then(res => {
-        let roleRes = res[0];
-        let permissionsRes = res[1];
+        const roleRes = res[0];
+        const permissionsRes = res[1];
         if (roleRes.data.code === 0 && permissionsRes.data.code === 0) {
           let rolePerms = roleRes.data.data.permissionList;
           // 从所有权限中剔除该角色已经有的权限

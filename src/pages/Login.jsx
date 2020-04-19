@@ -6,19 +6,18 @@ import style from './login.css';
 import http from '../utils/axios';
 import { getToken, setToken } from '../utils/authc';
 
-
 class Login extends Component {
-
   componentDidMount() {
-    let token = getToken()
+    let token = getToken();
     if (token) {
-      this.login(token)
+      this.login(token);
     }
   }
 
   login = values => {
-    http.post('/user/login', values).then(
-      res => {
+    http
+      .post('/user/login', values)
+      .then(res => {
         if (res.data.code === 0) {
           message.success('登录成功');
           setToken(values);
@@ -28,12 +27,15 @@ class Login extends Component {
         } else {
           message.error(res.data.msg);
         }
-      }
-    ).catch(err => { console.log(err); message.error('未知错误'); })
-  }
+      })
+      .catch(err => {
+        console.log(err);
+        message.error('未知错误');
+      });
+  };
 
   onFinish = values => {
-    this.login(values)
+    this.login(values);
   };
 
   saveUserInfoToDva = value => {
@@ -41,40 +43,42 @@ class Login extends Component {
       type: 'userInfo/save',
       isLogined: true,
       data: value
-    })
-  }
-
+    });
+  };
 
   render() {
     return (
-      <Card title="管理后台登录" className={style.form}>
+      <Card title='管理后台登录' className={style.form}>
         <Form
-          name="normal_login"
-          className="login-form"
+          name='normal_login'
+          className='login-form'
           initialValues={{ remember: true }}
-          onFinish={this.onFinish}
-        >
+          onFinish={this.onFinish}>
           <Form.Item
-            name="number"
-            rules={[{ required: true, message: '请输入学号/工号!' }]}
-          >
-            <Input prefix={<UserOutlined className="site-form-item-icon" />} placeholder="学号/工号" />
+            name='number'
+            rules={[{ required: true, message: '请输入学号/工号!' }]}>
+            <Input
+              prefix={<UserOutlined className='site-form-item-icon' />}
+              placeholder='学号/工号'
+            />
           </Form.Item>
           <Form.Item
-            name="password"
-            rules={[{ required: true, message: '请输入密码!' }]}
-          >
+            name='password'
+            rules={[{ required: true, message: '请输入密码!' }]}>
             <Input
-              prefix={<LockOutlined className="site-form-item-icon" />}
-              type="password"
-              placeholder="密码"
+              prefix={<LockOutlined className='site-form-item-icon' />}
+              type='password'
+              placeholder='密码'
             />
           </Form.Item>
 
           <Form.Item>
-            <Button type="primary" htmlType="submit" className="login-form-button">
+            <Button
+              type='primary'
+              htmlType='submit'
+              className='login-form-button'>
               登录
-        </Button>
+            </Button>
           </Form.Item>
         </Form>
       </Card>
@@ -82,6 +86,4 @@ class Login extends Component {
   }
 }
 
-export default connect(
-  ({ userInfo }) => ({ userInfo })
-)(Login);
+export default connect(({ userInfo }) => ({ userInfo }))(Login);
