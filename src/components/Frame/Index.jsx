@@ -14,7 +14,7 @@ import {
   SettingTwoTone,
   SmileOutlined
 } from '@ant-design/icons';
-import Logo from '../../assets/yay.jpg';
+import Logo from '../../assets/logo.png';
 import { routesGroup } from '../../routes';
 import style from './frame.css';
 import { clearToken } from '../../utils/authc';
@@ -107,8 +107,8 @@ function Index(props) {
     <Layout style={{ minHeight: '100%' }}>
       <Header className={style.header}>
         <Space>
-          <img src={Logo} alt='logo' style={{ width: '100px' }} />
-          <span className={style.headerTitle}>OA管理系统</span>
+          <img src={Logo} alt='logo' className={style.logo} />
+          <span className={style.headerTitle}>自动化办公管理系统</span>
         </Space>
         <Dropdown overlay={popMenu}>
           <div>

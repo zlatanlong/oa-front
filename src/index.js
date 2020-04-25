@@ -8,7 +8,7 @@ const app = dva({
   initialState: {
     // products: {
     // }
-  },
+  }
 });
 
 // 2. Plugins
@@ -18,6 +18,7 @@ const app = dva({
 // app.model(require('./models/example').default);
 app.model(require('./models/products').default);
 app.model(require('./models/userInfo').default);
+app.model(require('./models/addThing').default);
 
 // 4. Router
 app.router(require('./router').default);

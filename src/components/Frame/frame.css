@@ -1,8 +1,14 @@
-.header{
+.header {
   display: flex;
   justify-content: space-between;
+  padding: 0 30px;
 }
-.headerTitle{
-  color: antiquewhite;
-  font-size: 22px;
+.headerTitle {
+  margin: 0 20px;
+  color: #e6f7ff;
+  font-size: 26px;
+  font-family: cursive;
+}
+.logo {
+  width: 200px;
 }

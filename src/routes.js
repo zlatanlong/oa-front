@@ -17,6 +17,7 @@ import UserEdit from './pages/user/UserEdit';
 import TeamInfo from './pages/team/TeamInfo';
 import Tags from './pages/tag/Tags';
 import TagEdit from './pages/tag/TagEdit';
+import ThingAdd from './pages/thing/ThingAdd';
 
 export const mainRoutes = [
   {
@@ -45,8 +46,8 @@ export const thingRoutes = [
     title: '收到事务详情页'
   },
   {
-    path: '/thing/edit/:id?',
-    component: Index,
+    path: '/thing/edit',
+    component: ThingAdd,
     exact: true,
     isShow: true,
     controlled: true,
