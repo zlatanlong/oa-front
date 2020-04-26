@@ -1,39 +1,31 @@
-import React, { useState, useEffect } from 'react';
-import http from '../../utils/axios';
+import React, { useEffect } from 'react';
 import { connect } from 'dva';
-import { Divider, Tree } from 'antd';
+import { Tree } from 'antd';
 
-const ThingAddTag = ({ addThing, saveThingChange }) => {
-  const [tags, setTags] = useState([]);
-
-  useEffect(() => {
-    getAvalibleTags();
-  }, []);
-
-  const getAvalibleTags = () => {
-    http
-      .post('/tag/tags')
-      .then(res => {
-        if (res.data.code === 0) {
-          setTags(res.data.data);
-        }
-      })
-      .catch(err => {
-        console.log(err);
-      });
-  };
-
+const ThingAddTag = ({ addThing, dispatch, saveThingChange }) => {
   const handleOnSelectTag = (selectedKeys, info) => {
     saveThingChange(selectedKeys[0], 'tagId');
+    saveThingChange(info.node.title, 'tagName');
+  };
+
+  useEffect(() => {
+    if (addThing.tags.length === 0) {
+      handleGetTags();
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  const handleGetTags = () => {
+    dispatch({ type: 'addThing/getTags' });
   };
 
   return (
     <div>
       <h4>可选标签：</h4>
-      {tags.length !== 0 && (
+      {addThing.tags.length !== 0 && (
         <Tree
           defaultExpandAll
-          treeData={tags}
+          treeData={addThing.tags}
           onSelect={handleOnSelectTag}
           selectedKeys={[addThing.tagId]}
         />

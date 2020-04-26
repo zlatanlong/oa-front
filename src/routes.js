@@ -18,6 +18,7 @@ import TeamInfo from './pages/team/TeamInfo';
 import Tags from './pages/tag/Tags';
 import TagEdit from './pages/tag/TagEdit';
 import ThingAdd from './pages/thing/ThingAdd';
+import ThingJoinedList from './pages/thing/ThingJoinedList';
 
 export const mainRoutes = [
   {
@@ -33,7 +34,7 @@ export const mainRoutes = [
 export const thingRoutes = [
   {
     path: '/thing/joinedlist',
-    component: Index,
+    component: ThingJoinedList,
     exact: true,
     isShow: true,
     title: '日程表'

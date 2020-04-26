@@ -1,7 +1,7 @@
-import React, { useState } from 'react';
+import React from 'react';
 import { connect } from 'dva';
 import { Input, Radio, Row, Col, DatePicker, Upload, Button } from 'antd';
-import style from './Thing.css';
+import style from './thing.css';
 import { UploadOutlined } from '@ant-design/icons';
 
 const { TextArea } = Input;

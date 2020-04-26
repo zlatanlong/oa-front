@@ -1,13 +1,15 @@
 import React, { useState } from 'react';
-
-import { Steps, Button, message, Card } from 'antd';
+import { Steps, Button, Card, message } from 'antd';
 import { connect } from 'dva';
 import ThingAddInfo from '../../components/Thing/ThingAddInfo';
 import ThingAddTag from '../../components/Thing/ThingAddTag';
+import ThingAddUsers from '../../components/Thing/ThingAddUsers';
+import ThingAddShow from '../../components/Thing/ThingAddShow';
+import http from '../../utils/axios';
 
 const { Step } = Steps;
 
-const ThingAdd = ({ addThing, dispatch }) => {
+const ThingAdd = ({ addThing, dispatch, history }) => {
   const [current, setCurrent] = useState(0);
 
   const saveThingChange = (value, key) => {
@@ -22,7 +24,7 @@ const ThingAdd = ({ addThing, dispatch }) => {
   const steps = [
     {
       key: 1,
-      title: '基本信息',
+      title: '填写基本信息',
       content: <ThingAddInfo saveThingChange={saveThingChange} />
     },
     {
@@ -32,18 +34,18 @@ const ThingAdd = ({ addThing, dispatch }) => {
     },
     {
       key: 3,
-      title: '选择事务接收人',
-      content: '选择事务接收人'
+      title: '选择接收小组/人',
+      content: <ThingAddUsers saveThingChange={saveThingChange} />
     },
     {
       key: 4,
       title: '创建问答',
-      content: '创建问答'
+      content: <ThingAddShow />
     },
     {
       key: 5,
       title: '发布事务',
-      content: '发布事务'
+      content: <ThingAddShow />
     }
   ];
 
@@ -59,9 +61,79 @@ const ThingAdd = ({ addThing, dispatch }) => {
     setCurrent(cur);
   };
 
+  const validThing = () => {
+    const data = addThing;
+    if (data.title === '') {
+      message.error('请输入标题！');
+      return false;
+    } else if (data.content === '') {
+      message.error('请输入内容！');
+      return false;
+    } else if (data.tagId === null) {
+      message.error('请选择标签！');
+      return false;
+    } else if (data.userTeam) {
+      if (data.teamId === null) {
+        message.error('请选择小组！');
+        return false;
+      }
+    } else {
+      if (data.receiverIds.length === 0) {
+        message.error('请选择接收者！');
+        return false;
+      }
+    }
+
+    return true;
+  };
+
   const handleAddThing = () => {
-    console.log('addThing', addThing);
-    message.success('发布成功！');
+    if (validThing()) {
+      console.log('addThing', addThing);
+      let formData = new FormData();
+      formData.append('title', addThing.title);
+      formData.append('content', addThing.content);
+      formData.append('hasSendFile', addThing.hasSendFile);
+      formData.append('needFinish', addThing.needFinish);
+      formData.append('needAnswer', addThing.needAnswer);
+      formData.append('needFileReply', addThing.needFileReply);
+      if (addThing.startTime !== null) {
+        formData.append('startTime', addThing.startTime._d);
+      }
+      if (addThing.endTime !== null) {
+        formData.append('endTime', addThing.endTime._d);
+      }
+      formData.append('tagId', addThing.tagId);
+      formData.append('userTeam', addThing.userTeam);
+      if (addThing.userTeam) {
+        formData.append('teamId', addThing.teamId);
+      } else {
+        formData.append('receiverIds', addThing.receiverIds);
+      }
+      if (addThing.files.length !== 0) {
+        addThing.files.forEach(file => {
+          formData.append('files', file);
+        });
+      }
+      formData.append('questionsJSON', addThing.questionsJSON);
+      const config = {
+        headers: {
+          'Content-Type': 'multipart/form-data'
+        }
+      };
+      http
+        .post('/thing', formData, config)
+        .then(res => {
+          if (res.data.code === 0) {
+            message.success('发布成功！');
+            dispatch({ type: 'addThing/init' });
+            history.push('/thing/createdlist');
+          }
+        })
+        .catch(err => {
+          console.log(err);
+        });
+    }
   };
 
   return (

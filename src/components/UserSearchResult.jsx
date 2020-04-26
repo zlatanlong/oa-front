@@ -1,3 +1,4 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 import React, { useState, useRef } from 'react';
 import {
   Card,
@@ -12,12 +13,13 @@ import {
 } from 'antd';
 import http from '../utils/axios';
 import { userColomns } from '../utils/table-columns';
+import { connect } from 'dva';
 
 const UserSearchResult = props => {
   const pageCurrent = useRef(1);
   const pageSize = useRef(10);
   const [pageTotal, setPageTotal] = useState(0);
-  const [form] = Form.useForm();
+  let [form] = Form.useForm();
   const [queryData, setQueryData] = useState({});
   const [pageData, setPageData] = useState([]);
   const [selectedRowKeys, setSelectedRowKeys] = useState([]);
@@ -65,7 +67,7 @@ const UserSearchResult = props => {
     selectedRowKeys,
     onChange: selectedRowKeys => {
       setSelectedRowKeys(selectedRowKeys);
-      props.getSelectIDs(selectedRowKeys);
+      props.getSelectIds(selectedRowKeys);
     }
   };
 
@@ -127,7 +129,7 @@ const UserSearchResult = props => {
         <Button
           onClick={() => {
             setSelectedRowKeys([]);
-            props.getSelectIDs([]);
+            props.getSelectIds([]);
           }}
           type='link'
           style={{ float: 'right' }}>
@@ -159,4 +161,4 @@ const UserSearchResult = props => {
   );
 };
 
-export default UserSearchResult;
+export default connect(({ addThing }) => ({ addThing }))(UserSearchResult);
