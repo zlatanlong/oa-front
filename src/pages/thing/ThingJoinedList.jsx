@@ -1,18 +1,18 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useRef } from 'react';
 import http from '../../utils/axios';
-import { Card, Form, Row, Col, Radio, Button } from 'antd';
-import TableAndPage from '../../components/TableAndPage.jsx';
+import { Card, Form, Row, Col, Radio, Button, Table } from 'antd';
 import moment from 'moment';
 
 const ThingJoinedList = ({ history }) => {
   const [form] = Form.useForm();
   const [pageTotal, setPageTotal] = useState(0);
-  const [queryData, setQueryData] = useState({});
   const [dataSource, setDataSource] = useState([]);
   const [loading, setLoading] = useState(false);
+  const [pageCurrent, setPageCurrent] = useState(1);
+  const [pageSize, setPageSize] = useState(10);
 
   useEffect(() => {
-    getJoinedThings(1, 10);
+    getJoinedThings(pageCurrent, pageSize);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
@@ -69,11 +69,6 @@ const ThingJoinedList = ({ history }) => {
         return map01toNY(text);
       }
     },
-    // {
-    //   title: '开始时间',
-    //   dataIndex: 'startTime',
-    //   render: formatDate
-    // },
     {
       title: '截止时间',
       dataIndex: 'endTime',
@@ -81,13 +76,12 @@ const ThingJoinedList = ({ history }) => {
     }
   ];
 
-  const getJoinedThings = (pageCurrent, pageSize, data) => {
+  const getJoinedThings = (current, size, data) => {
     setLoading(true);
-    console.log('queryData', queryData);
     http
       .post('/thing/joinedList', {
-        pageCurrent,
-        pageSize,
+        pageCurrent: current,
+        pageSize: size,
         data
       })
       .then(res => {
@@ -108,9 +102,9 @@ const ThingJoinedList = ({ history }) => {
   };
 
   const onFinish = values => {
-    setQueryData(values);
-    // console.log('queryData', queryData);
     getJoinedThings(1, 10, values);
+    setPageCurrent(1);
+    setPageSize(10);
   };
 
   const ynOptions = [
@@ -176,14 +170,31 @@ const ThingJoinedList = ({ history }) => {
         </Form>
       </Card>
       <Card>
-        <TableAndPage
-          pageTotal={pageTotal}
-          dataSource={dataSource}
-          columns={columns}
-          getPageData={(pageCurrent, pageSize) => {
-            getJoinedThings(pageCurrent, pageSize);
-          }}
+        <Table
           loading={loading}
+          pagination={{
+            current: pageCurrent,
+            pageSize: pageSize,
+            total: pageTotal,
+            showTotal: (total, range) =>
+              ` 共 ${total} 条，第 ${range[0]}-${range[1]} 条`,
+            onChange: (page, pageSize) => {
+              setPageCurrent(page);
+              form.validateFields().then(values => {
+                getJoinedThings(page, pageSize, values);
+              });
+            },
+            onShowSizeChange: (page, size) => {
+              setPageCurrent(1);
+              setPageSize(size);
+              form.validateFields().then(values => {
+                getJoinedThings(1, size, values);
+              });
+            }
+          }}
+          columns={columns}
+          dataSource={dataSource}
+          rowKey={row => row.id}
         />
       </Card>
     </div>

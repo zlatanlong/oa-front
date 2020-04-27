@@ -142,7 +142,7 @@ const ThingAddInfo = ({ addThing, saveThingChange }) => {
           <Upload {...fileUploadProps}>
             <Button>
               <UploadOutlined />
-              点击上传(可以上传多个)
+              点击上传(多次点击可以上传多个)
             </Button>
           </Upload>
         </Row>

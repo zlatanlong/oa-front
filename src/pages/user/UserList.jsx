@@ -1,12 +1,12 @@
-import React, { useState, useRef } from 'react';
+import React, { useState } from 'react';
 import { Card, Table, Form, Input, Button, Radio, Row, Col } from 'antd';
 import http from '../../utils/axios';
 import { userColomns } from '../../utils/table-columns';
 
 const UserList = props => {
   const [form] = Form.useForm();
-  const pageCurrent = useRef(1);
-  const pageSize = useRef(10);
+  const [pageCurrent, setPageCurrent] = useState(1);
+  const [pageSize, setPageSize] = useState(10);
   const [pageTotal, setPageTotal] = useState(0);
   const [queryData, setQueryData] = useState({});
   const [pageData, setPageData] = useState([]);
@@ -38,12 +38,12 @@ const UserList = props => {
     }
   ];
 
-  const getPageData = queryData => {
+  const getPageData = (current, size, queryData) => {
     setLoading(true);
     http
       .post('/user/getUsers', {
-        pageCurrent: pageCurrent.current,
-        pageSize: pageSize.current,
+        pageCurrent: current,
+        pageSize: size,
         data: queryData
       })
       .then(res => {
@@ -59,10 +59,10 @@ const UserList = props => {
   };
 
   const onFinish = values => {
-    pageCurrent.current = 1;
-    pageSize.current = 10;
+    setPageCurrent(1);
+    setPageSize(10);
     setQueryData(values);
-    getPageData(values);
+    getPageData(1, 10, values);
   };
 
   const queryList = [
@@ -129,17 +129,19 @@ const UserList = props => {
         <Table
           loading={loading}
           pagination={{
+            current: pageCurrent,
+            pageSize: pageSize,
             total: pageTotal,
             showTotal: (total, range) =>
               ` 共 ${total} 条，第 ${range[0]}-${range[1]} 条`,
-            onChange: (page, pageSize) => {
-              pageCurrent.current = page;
-              getPageData(queryData);
+            onChange: (page, size) => {
+              setPageCurrent(page);
+              getPageData(page, size, queryData);
             },
             onShowSizeChange: (current, size) => {
-              pageSize.current = size;
-              pageCurrent.current = 1;
-              getPageData(queryData);
+              setPageCurrent(1);
+              setPageSize(size);
+              getPageData(current, size, queryData);
             }
           }}
           columns={columns}

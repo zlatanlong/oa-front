@@ -1,5 +1,5 @@
 /* eslint-disable react-hooks/exhaustive-deps */
-import React, { useState, useRef } from 'react';
+import React, { useState } from 'react';
 import {
   Card,
   Table,
@@ -13,34 +13,37 @@ import {
 } from 'antd';
 import http from '../utils/axios';
 import { userColomns } from '../utils/table-columns';
-import { connect } from 'dva';
 
-const UserSearchResult = props => {
-  const pageCurrent = useRef(1);
-  const pageSize = useRef(10);
+const UserSearchResult = ({ extraColumns, tableSelectable, getSelectIds }) => {
+  const [form] = Form.useForm();
+  const [pageCurrent, setPageCurrent] = useState(1);
+  const [pageSize, setPageSize] = useState(10);
   const [pageTotal, setPageTotal] = useState(0);
-  let [form] = Form.useForm();
   const [queryData, setQueryData] = useState({});
   const [pageData, setPageData] = useState([]);
   const [selectedRowKeys, setSelectedRowKeys] = useState([]);
+  const [loading, setLoading] = useState(false);
+
   const identityOptions = [
     { name: '学生', value: 0 },
     { name: '老师', value: 1 },
     { name: '院长', value: 2 }
   ];
-  const columns = [...userColomns];
+  const columns = [...userColomns, ...extraColumns];
 
-  const getPageData = queryData => {
+  const getPageData = (current, size, queryData) => {
+    setLoading(true);
     http
       .post('/user/getUsers', {
-        pageCurrent: pageCurrent.current,
-        pageSize: pageSize.current,
+        pageCurrent: current,
+        pageSize: size,
         data: queryData
       })
       .then(res => {
         if (res.data.code === 0) {
           setPageData(res.data.data.records);
           setPageTotal(res.data.data.total);
+          setLoading(false);
         }
       })
       .catch(err => {
@@ -49,10 +52,10 @@ const UserSearchResult = props => {
   };
 
   const onFinish = values => {
-    pageCurrent.current = 1;
-    pageSize.current = 10;
+    setPageCurrent(1);
+    setPageSize(10);
     setQueryData(values);
-    getPageData(values);
+    getPageData(1, 10, values);
   };
 
   const queryList = [
@@ -67,7 +70,7 @@ const UserSearchResult = props => {
     selectedRowKeys,
     onChange: selectedRowKeys => {
       setSelectedRowKeys(selectedRowKeys);
-      props.getSelectIds(selectedRowKeys);
+      getSelectIds(selectedRowKeys);
     }
   };
 
@@ -124,41 +127,48 @@ const UserSearchResult = props => {
         </Form>
       </Card>
       <Card>
-        已选中 <span style={{ color: 'blue' }}>{selectedRowKeys.length}</span>{' '}
-        人。
-        <Button
-          onClick={() => {
-            setSelectedRowKeys([]);
-            props.getSelectIds([]);
-          }}
-          type='link'
-          style={{ float: 'right' }}>
-          清除已选
-        </Button>
+        {tableSelectable && (
+          <div>
+            已选中{' '}
+            <span style={{ color: 'blue' }}>{selectedRowKeys.length}</span> 人。
+            <Button
+              onClick={() => {
+                setSelectedRowKeys([]);
+                getSelectIds([]);
+              }}
+              type='link'
+              style={{ float: 'right' }}>
+              清除已选
+            </Button>
+          </div>
+        )}
         <Divider />
         <Table
+          loading={loading}
           pagination={{
+            current: pageCurrent,
+            pageSize: pageSize,
             total: pageTotal,
             showTotal: (total, range) =>
               ` 共 ${total} 条，第 ${range[0]}-${range[1]} 条`,
-            onChange: (page, pageSize) => {
-              pageCurrent.current = page;
-              getPageData(queryData);
+            onChange: (page, size) => {
+              setPageCurrent(page);
+              getPageData(page, size, queryData);
             },
             onShowSizeChange: (current, size) => {
-              pageSize.current = size;
-              pageCurrent.current = 1;
-              getPageData(queryData);
+              setPageCurrent(1);
+              setPageSize(size);
+              getPageData(current, size, queryData);
             }
           }}
           columns={columns}
           dataSource={pageData}
           rowKey={row => row.id}
-          rowSelection={rowSelection}
+          rowSelection={tableSelectable ? rowSelection : null}
         />
       </Card>
     </div>
   );
 };
 
-export default connect(({ addThing }) => ({ addThing }))(UserSearchResult);
+export default UserSearchResult;

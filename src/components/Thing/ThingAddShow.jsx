@@ -26,6 +26,11 @@ const ThingAddShow = ({ addThing }) => {
           {addThing.needFinish === '1' && (
             <li>是否需要回答？ {addThing.needAnswer === '1' ? '是' : '否'}</li>
           )}
+          {addThing.needFinish === '1' && (
+            <li>
+              是否需要回复文件？ {addThing.needFileReply === '1' ? '是' : '否'}
+            </li>
+          )}
           {addThing.hasSendFile === '1' && (
             <li>已选择{addThing.files.length}个文件</li>
           )}

@@ -124,7 +124,7 @@ function Index(props) {
           <Menu
             mode='inline'
             defaultSelectedKeys={['/admin/thing']}
-            defaultOpenKeys={['tagRoutes']}
+            defaultOpenKeys={['thingRoutes']}
             style={{ height: '100%', borderRight: 0 }}>
             {/* 事务管理 */}
             <SubMenu
