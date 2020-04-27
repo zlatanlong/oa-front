@@ -3,7 +3,7 @@ import { Table, Button, Modal, Space, Input } from 'antd';
 import moment from 'moment';
 import http from '../../utils/axios';
 
-const TeamCreated = props => {
+const TeamCreatedList = props => {
   const [teams, setTeams] = useState([]);
   const [showUpdateModal, setShowUpdateModal] = useState(false);
   const [updateRecord, setUpdateRecord] = useState({});
@@ -125,4 +125,4 @@ const TeamCreated = props => {
   );
 };
 
-export default TeamCreated;
+export default TeamCreatedList;

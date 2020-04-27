@@ -1,5 +1,6 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 import React, { useState } from 'react';
+import PropTypes from 'prop-types';
 import {
   Card,
   Table,
@@ -169,6 +170,17 @@ const UserSearchResult = ({ extraColumns, tableSelectable, getSelectIds }) => {
       </Card>
     </div>
   );
+};
+
+UserSearchResult.propTypes = {
+  extraColumns: PropTypes.array,
+  tableSelectable: PropTypes.bool,
+  getSelectIds: PropTypes.func
+};
+
+UserSearchResult.defaultProps = {
+  extraColumns: [],
+  tableSelectable: true
 };
 
 export default UserSearchResult;

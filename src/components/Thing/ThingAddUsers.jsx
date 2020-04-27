@@ -50,6 +50,8 @@ const ThingAddUsers = ({ addThing, saveThingChange, dispatch }) => {
         })}
       {!addThing.userTeam && (
         <UserSearchResult
+          extraColumns={[]}
+          tableSelectable={true}
           getSelectIds={keys => {
             saveThingChange(keys, 'receiverIds');
           }}

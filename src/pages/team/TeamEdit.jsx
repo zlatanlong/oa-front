@@ -81,7 +81,7 @@ const TeamEdit = props => {
       </Card>
       <Card title='选择成员'>
         <UserSearchResult
-          getSelectIDs={ids => {
+          getSelectIds={ids => {
             setAddUserIDs(ids);
           }}
         />

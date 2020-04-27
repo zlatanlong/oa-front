@@ -3,7 +3,7 @@ import { Tag, Card } from 'antd';
 import moment from 'moment';
 import http from '../../utils/axios';
 
-const TeamJoined = () => {
+const TeamJoinedList = () => {
   const [teams, setTeams] = useState([]);
 
   const getJoinedTeams = () => {
@@ -34,4 +34,4 @@ const TeamJoined = () => {
   );
 };
 
-export default TeamJoined;
+export default TeamJoinedList;

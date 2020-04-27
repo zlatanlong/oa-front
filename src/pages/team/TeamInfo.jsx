@@ -146,7 +146,7 @@ const TeamInfo = props => {
         }}
         onOk={handleAddMembers}>
         <UserSearchResult
-          getSelectIDs={ids => {
+          getSelectIds={ids => {
             setAddUserIDs(ids);
           }}
         />

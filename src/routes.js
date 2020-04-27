@@ -11,8 +11,8 @@ import RoleList from './pages/role/RoleList';
 import Role from './pages/role/Role';
 import UserList from './pages/user/UserList';
 import TeamEdit from './pages/team/TeamEdit';
-import TeamJoined from './pages/team/TeamJoined';
-import TeamCreated from './pages/team/TeamCreated';
+import TeamJoinedList from './pages/team/TeamJoinedList';
+import TeamCreatedList from './pages/team/TeamCreatedList';
 import UserEdit from './pages/user/UserEdit';
 import TeamInfo from './pages/team/TeamInfo';
 import Tags from './pages/tag/Tags';
@@ -83,7 +83,7 @@ export const thingRoutes = [
 export const teamRoutes = [
   {
     path: '/team/joinedList',
-    component: TeamJoined,
+    component: TeamJoinedList,
     exact: true,
     isShow: true,
     title: '我的小组'
@@ -98,7 +98,7 @@ export const teamRoutes = [
   },
   {
     path: '/team/createdlist',
-    component: TeamCreated,
+    component: TeamCreatedList,
     exact: true,
     isShow: true,
     controlled: true,
