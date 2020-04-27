@@ -17,12 +17,10 @@ const ThingAddShow = ({ addThing }) => {
             <li>接收成员：{addThing.receiverIds.length}人</li>
           )}
           {addThing.startTime !== null && (
-            <li>
-              开始时间：{addThing.startTime.format('YYYY-MM-DD hh:mm:ss')}
-            </li>
+            <li>开始时间：{addThing.startTime.format('YYYY-MM-DD HH:mm')}</li>
           )}
           {addThing.endTime !== null && (
-            <li>结束时间：{addThing.endTime.format('YYYY-MM-DD hh-mm-ss')}</li>
+            <li>结束时间：{addThing.endTime.format('YYYY-MM-DD HH-mm-ss')}</li>
           )}
           <li>是否需要完成？ {addThing.needFinish === '1' ? '是' : '否'}</li>
           {addThing.needFinish === '1' && (

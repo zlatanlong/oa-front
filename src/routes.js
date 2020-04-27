@@ -19,6 +19,7 @@ import Tags from './pages/tag/Tags';
 import TagEdit from './pages/tag/TagEdit';
 import ThingAdd from './pages/thing/ThingAdd';
 import ThingJoinedList from './pages/thing/ThingJoinedList';
+import ThingJoined from './pages/thing/ThingJoined';
 
 export const mainRoutes = [
   {
@@ -40,8 +41,8 @@ export const thingRoutes = [
     title: '日程表'
   },
   {
-    path: '/thing/joinedinfo/:id',
-    component: Index,
+    path: '/thing/joined/:id',
+    component: ThingJoined,
     exact: true,
     isShow: false,
     title: '收到事务详情页'

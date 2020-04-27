@@ -7,26 +7,30 @@ import http from '../utils/axios.js';
 
 /**
  * 子路由
- * @param {*} props 
+ * @param {*} props
  */
 function IndexPage({ dispatch, userInfo }) {
-
   useEffect(() => {
-    http.post('/user').then(
-      res => {
+    http
+      .post('/user')
+      .then(res => {
         if (res.data.code === 0) {
           dispatch({
             type: 'userInfo/save',
             isLogined: true,
             data: res.data.data
-          })
+          });
+        } else {
+          console.log('res.data.data', res.data.data);
         }
-      }
-    ).catch(err => { console.log(err) })
+      })
+      .catch(err => {
+        console.log(err);
+      });
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  return (userInfo.isLogined ?
+  return userInfo.isLogined ? (
     <Frame>
       <Switch>
         {adminRoutes.map(route => {
@@ -36,21 +40,20 @@ function IndexPage({ dispatch, userInfo }) {
               path={route.path}
               exact={route.exact}
               render={routeProps => {
-                return <route.component {...routeProps} />
+                return <route.component {...routeProps} />;
               }}
             />
-          )
+          );
         })}
         {/* <Redirect to={mainRoutes[1].path} /> */}
         <Route path='*' component={mainRoutes[1].component} />
       </Switch>
-    </Frame> : <Redirect to='/login' />
+    </Frame>
+  ) : (
+    <Redirect to='/login' />
   );
 }
 
-IndexPage.propTypes = {
-};
+IndexPage.propTypes = {};
 
-export default connect(
-  ({ userInfo }) => ({ userInfo })
-)(IndexPage);
+export default connect(({ userInfo }) => ({ userInfo }))(IndexPage);

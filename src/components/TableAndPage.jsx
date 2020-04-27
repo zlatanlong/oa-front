@@ -2,12 +2,19 @@ import React, { useRef } from 'react';
 import PropTypes from 'prop-types';
 import { Table } from 'antd';
 
-const TableAndPage = ({ pageTotal, columns, dataSource, getPageData }) => {
+const TableAndPage = ({
+  pageTotal,
+  columns,
+  dataSource,
+  getPageData,
+  loading
+}) => {
   const pageCurrent = useRef(1);
   const pageSize = useRef(10);
 
   return (
     <Table
+      loading={loading}
       pagination={{
         total: pageTotal,
         showTotal: (total, range) =>
@@ -33,7 +40,8 @@ TableAndPage.propTypes = {
   pageTotal: PropTypes.number.isRequired,
   columns: PropTypes.array.isRequired,
   dataSource: PropTypes.array.isRequired,
-  getPageData: PropTypes.func.isRequired
+  getPageData: PropTypes.func.isRequired,
+  loading: PropTypes.bool.isRequired
 };
 
 export default TableAndPage;

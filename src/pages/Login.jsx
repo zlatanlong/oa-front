@@ -1,20 +1,27 @@
 import React, { Component } from 'react';
 import { connect } from 'dva';
-import { Form, Input, Button, Card, message } from 'antd';
+import { Form, Input, Button, Card, message, Spin } from 'antd';
 import { UserOutlined, LockOutlined } from '@ant-design/icons';
 import style from './login.css';
 import http from '../utils/axios';
 import { getToken, setToken } from '../utils/authc';
 
 class Login extends Component {
+  constructor(props) {
+    super(props);
+    this.state = { loading: false };
+  }
+
   componentDidMount() {
     let token = getToken();
+    console.log('token', token);
     if (token) {
       this.login(token);
     }
   }
 
   login = values => {
+    this.setState({ loading: true });
     http
       .post('/user/login', values)
       .then(res => {
@@ -25,11 +32,13 @@ class Login extends Component {
           console.log(this.props.history);
           this.props.history.push('/u/info');
         } else {
+          this.setState({ loading: true });
           message.error(res.data.msg);
         }
       })
       .catch(err => {
         console.log(err);
+        this.setState({ loading: true });
         message.error('未知错误');
       });
   };
@@ -49,38 +58,40 @@ class Login extends Component {
   render() {
     return (
       <Card title='管理后台登录' className={style.form}>
-        <Form
-          name='normal_login'
-          className='login-form'
-          initialValues={{ remember: true }}
-          onFinish={this.onFinish}>
-          <Form.Item
-            name='number'
-            rules={[{ required: true, message: '请输入学号/工号!' }]}>
-            <Input
-              prefix={<UserOutlined className='site-form-item-icon' />}
-              placeholder='学号/工号'
-            />
-          </Form.Item>
-          <Form.Item
-            name='password'
-            rules={[{ required: true, message: '请输入密码!' }]}>
-            <Input
-              prefix={<LockOutlined className='site-form-item-icon' />}
-              type='password'
-              placeholder='密码'
-            />
-          </Form.Item>
+        <Spin spinning={this.state.loading}>
+          <Form
+            name='normal_login'
+            className='login-form'
+            initialValues={{ remember: true }}
+            onFinish={this.onFinish}>
+            <Form.Item
+              name='number'
+              rules={[{ required: true, message: '请输入学号/工号!' }]}>
+              <Input
+                prefix={<UserOutlined className='site-form-item-icon' />}
+                placeholder='学号/工号'
+              />
+            </Form.Item>
+            <Form.Item
+              name='password'
+              rules={[{ required: true, message: '请输入密码!' }]}>
+              <Input
+                prefix={<LockOutlined className='site-form-item-icon' />}
+                type='password'
+                placeholder='密码'
+              />
+            </Form.Item>
 
-          <Form.Item>
-            <Button
-              type='primary'
-              htmlType='submit'
-              className='login-form-button'>
-              登录
-            </Button>
-          </Form.Item>
-        </Form>
+            <Form.Item>
+              <Button
+                type='primary'
+                htmlType='submit'
+                className='login-form-button'>
+                登录
+              </Button>
+            </Form.Item>
+          </Form>
+        </Spin>
       </Card>
     );
   }

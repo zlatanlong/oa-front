@@ -4,12 +4,13 @@ import http from '../../utils/axios';
 import { userColomns } from '../../utils/table-columns';
 
 const UserList = props => {
+  const [form] = Form.useForm();
   const pageCurrent = useRef(1);
   const pageSize = useRef(10);
   const [pageTotal, setPageTotal] = useState(0);
-  const [form] = Form.useForm();
   const [queryData, setQueryData] = useState({});
   const [pageData, setPageData] = useState([]);
+  const [loading, setLoading] = useState(false);
 
   const identityOptions = [
     { name: '学生', value: 0 },
@@ -38,6 +39,7 @@ const UserList = props => {
   ];
 
   const getPageData = queryData => {
+    setLoading(true);
     http
       .post('/user/getUsers', {
         pageCurrent: pageCurrent.current,
@@ -48,6 +50,7 @@ const UserList = props => {
         if (res.data.code === 0) {
           setPageData(res.data.data.records);
           setPageTotal(res.data.data.total);
+          setLoading(false);
         }
       })
       .catch(err => {
@@ -124,6 +127,7 @@ const UserList = props => {
       </Card>
       <Card>
         <Table
+          loading={loading}
           pagination={{
             total: pageTotal,
             showTotal: (total, range) =>
