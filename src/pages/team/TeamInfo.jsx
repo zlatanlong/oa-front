@@ -1,11 +1,13 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 import React, { useState, useEffect, useRef } from 'react';
-import { Divider, Card, Table, Button, Popconfirm, message, Modal } from 'antd';
+import { Card, Table, Button, Popconfirm, message, Modal } from 'antd';
 import { userColomns } from '../../utils/table-columns';
 import http from '../../utils/axios';
 import UserSearchResult from '../../components/UserSearchResult';
+import BreadNav from '../../components/Frame/BreadNav';
 
 const TeamInfo = props => {
+  const [loading, setLoading] = useState(false);
   const pageCurrent = useRef(1);
   const pageSize = useRef(10);
   const [teamData, setTeamData] = useState({ membersPage: { total: 0 } });
@@ -18,6 +20,7 @@ const TeamInfo = props => {
   }, []);
 
   const getPageData = () => {
+    setLoading(true);
     http
       .post('/team', {
         pageCurrent: pageCurrent.current,
@@ -29,6 +32,7 @@ const TeamInfo = props => {
       .then(res => {
         if (res.data.code === 0) {
           setTeamData(res.data.data);
+          setLoading(false);
         }
       })
       .catch(err => {
@@ -99,36 +103,50 @@ const TeamInfo = props => {
 
   return (
     <div>
-      <Card title={`${teamData.teamName}成员：`}>
-        <Button
-          onClick={() => {
-            setShowModal(true);
-          }}
-          type='primary'>
-          添加成员
-        </Button>
-        <Popconfirm
-          title='谨慎：确定删除？'
-          onConfirm={() => {
-            handleDelMembers();
-          }}>
+      <BreadNav
+        navs={[
+          { url: '/team/createdlist', name: '已创建小组' },
+          { url: props.location.pathname, name: `${teamData.teamName}成员：` }
+        ]}
+      />
+      <Card
+        loading={loading}
+        title={`${teamData.teamName}成员：`}
+        extra={
           <Button
-            style={{ float: 'right' }}
-            disabled={selectedRowKeys.length === 0}
-            danger={selectedRowKeys.length > 0}
-            size='small'>{`删除已选择的${selectedRowKeys.length}项`}</Button>
-        </Popconfirm>
-        <Button
-          style={{ float: 'right' }}
-          disabled={selectedRowKeys.length === 0}
-          type='link'
-          size='small'
-          onClick={() => {
-            setSelectedRowKeys([]);
+            onClick={() => {
+              setShowModal(true);
+            }}
+            type='primary'>
+            添加成员
+          </Button>
+        }>
+        <div
+          style={{
+            marginBottom: '1rem',
+            display: 'flex',
+            justifyContent: 'flex-end'
           }}>
-          清除已选
-        </Button>
-        <Divider />
+          <Popconfirm
+            title='谨慎：确定删除？'
+            onConfirm={() => {
+              handleDelMembers();
+            }}>
+            <Button
+              disabled={selectedRowKeys.length === 0}
+              danger={selectedRowKeys.length > 0}
+              size='small'>{`删除已选择的${selectedRowKeys.length}项`}</Button>
+          </Popconfirm>
+          <Button
+            disabled={selectedRowKeys.length === 0}
+            type='link'
+            size='small'
+            onClick={() => {
+              setSelectedRowKeys([]);
+            }}>
+            清除已选
+          </Button>
+        </div>
         <Table
           columns={userColomns}
           dataSource={teamData.membersPage.records}

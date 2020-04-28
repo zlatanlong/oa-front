@@ -6,6 +6,7 @@ import ThingAddTag from '../../components/Thing/ThingAddTag';
 import ThingAddUsers from '../../components/Thing/ThingAddUsers';
 import ThingAddShow from '../../components/Thing/ThingAddShow';
 import http from '../../utils/axios';
+import BreadNav from '../../components/Frame/BreadNav';
 
 const { Step } = Steps;
 
@@ -138,6 +139,7 @@ const ThingAdd = ({ addThing, dispatch, history }) => {
 
   return (
     <div>
+      <BreadNav navs={[{ url: '/thing/edit', name: '创建事务' }]} />
       <Card>
         <Steps current={current} onChange={onChange}>
           {steps

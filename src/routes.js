@@ -20,6 +20,10 @@ import TagEdit from './pages/tag/TagEdit';
 import ThingAdd from './pages/thing/ThingAdd';
 import ThingJoinedList from './pages/thing/ThingJoinedList';
 import ThingJoined from './pages/thing/ThingJoined';
+import ThingCreatedList from './pages/thing/ThingCreatedList';
+import ThingCreated from './pages/thing/ThingCreated';
+import ThingUserReply from './pages/thing/ThingUserReply';
+import TagEditPublic from './pages/tag/TagEditPublic';
 
 export const mainRoutes = [
   {
@@ -57,22 +61,30 @@ export const thingRoutes = [
   },
   {
     path: '/thing/createdlist',
-    component: Index,
+    component: ThingCreatedList,
     exact: true,
     isShow: true,
     controlled: true,
     title: '已创建事务列表'
   },
   {
-    path: '/thing/createdinfo/:id',
-    component: Index,
+    path: '/thing/created/:id',
+    component: ThingCreated,
     exact: true,
     isShow: false,
     controlled: true,
     title: '已创建事务详情'
   },
   {
-    path: '/thing/edit/mine',
+    path: '/thing/created/:thingId/:userId',
+    component: ThingUserReply,
+    exact: true,
+    isShow: false,
+    controlled: true,
+    title: '某人已完成事务详情'
+  },
+  {
+    path: '/thing/personalEdit',
     component: Index,
     exact: true,
     isShow: true,
@@ -140,15 +152,15 @@ export const tagRoutes = [
     title: '可用标签'
   },
   {
-    path: '/tag/edit/0',
+    path: '/tag/edit',
     component: TagEdit,
     exact: true,
     isShow: false,
     title: '创建私有标签'
   },
   {
-    path: '/tag/edit/1',
-    component: TagEdit,
+    path: '/tag/editpub',
+    component: TagEditPublic,
     exact: true,
     isShow: true,
     controlled: true,

@@ -1,20 +1,18 @@
-import { Button, Card, Form, Table } from 'antd';
+import { Button, Card, Table } from 'antd';
 import moment from 'moment';
 import React, { useEffect, useState } from 'react';
-import ThingSearchForm from '../../components/Thing/ThingSearchForm';
 import http from '../../utils/axios';
 import BreadNav from '../../components/Frame/BreadNav';
 
-const ThingJoinedList = ({ history }) => {
-  const [form] = Form.useForm();
+const ThingCreatedList = ({ history }) => {
   const [pageTotal, setPageTotal] = useState(0);
-  const [dataSource, setDataSource] = useState([]);
   const [loading, setLoading] = useState(false);
+  const [dataSource, setDataSource] = useState([]);
   const [pageCurrent, setPageCurrent] = useState(1);
   const [pageSize, setPageSize] = useState(10);
 
   useEffect(() => {
-    getJoinedThings(pageCurrent, pageSize);
+    getCreatedThings(pageCurrent, pageSize);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
@@ -26,26 +24,22 @@ const ThingJoinedList = ({ history }) => {
   };
 
   const map01toNY = text => {
-    return text === '1' ? '是' : <span style={{ color: 'red' }}>否</span>;
+    return text === '1' ? <span style={{ color: 'blue' }}>是</span> : '否';
   };
 
   const columns = [
     {
       title: '标题',
       dataIndex: 'title',
-      width: '25%',
+      width: '20%',
       render: (text, record) => (
         <Button
           type='link'
           style={{ padding: '0', margin: '0' }}
-          onClick={() => history.push(`/thing/joined/${record.id}`)}>
+          onClick={() => history.push(`/thing/created/${record.id}`)}>
           {text}
         </Button>
       )
-    },
-    {
-      title: '发起人',
-      dataIndex: 'realName'
     },
     {
       title: '标签',
@@ -54,17 +48,33 @@ const ThingJoinedList = ({ history }) => {
     {
       title: '阅读',
       dataIndex: 'hasRead',
-      render: map01toNY
+      render: (text, record) => {
+        let style = {};
+        if (record.readCount === record.receiversCount) {
+          style = { color: 'green' };
+        }
+        return (
+          <span style={style}>
+            {`${record.readCount}/${record.receiversCount}`}
+          </span>
+        );
+      }
     },
     {
       title: '完成',
       dataIndex: 'hasFinished',
       render: (text, record) => {
-        if (record.needFinish === '0') {
-          return '不需要';
+        if (record.needFinish !== '1') {
+          return '';
         }
-        return map01toNY(text);
+        return `${record.finishedCount}/${record.receiversCount}`;
       }
+    },
+
+    {
+      title: '回答',
+      dataIndex: 'needAnswer',
+      render: map01toNY
     },
     {
       title: '附件',
@@ -72,6 +82,11 @@ const ThingJoinedList = ({ history }) => {
       render: text => {
         return text === '1' ? <span style={{ color: 'blue' }}>有</span> : '无';
       }
+    },
+    {
+      title: '回复附件',
+      dataIndex: 'needFileReply',
+      render: map01toNY
     },
     {
       title: '创建时间',
@@ -85,23 +100,17 @@ const ThingJoinedList = ({ history }) => {
     }
   ];
 
-  const getJoinedThings = (current, size, data) => {
+  const getCreatedThings = (current, size) => {
     setLoading(true);
     http
-      .post('/thing/joinedList', {
+      .post('/thing/createdList', {
         pageCurrent: current,
-        pageSize: size,
-        data
+        pageSize: size
       })
       .then(res => {
         if (res.data.code === 0) {
           setPageTotal(res.data.data.total);
-          const tempData = res.data.data.records.map(record => ({
-            ...record.thing,
-            hasFinished: record.hasFinished,
-            hasRead: record.hasRead
-          }));
-          setDataSource(tempData);
+          setDataSource(res.data.data.records);
           setLoading(false);
         }
       })
@@ -110,18 +119,9 @@ const ThingJoinedList = ({ history }) => {
       });
   };
 
-  const onFinish = values => {
-    getJoinedThings(1, 10, values);
-    setPageCurrent(1);
-    setPageSize(10);
-  };
-
   return (
-    <div>
-      <BreadNav navs={[{ url: '/thing/joinedlist', name: '日程表' }]} />
-      <Card>
-        <ThingSearchForm form={form} onFinish={onFinish} />
-      </Card>
+    <>
+      <BreadNav navs={[{ url: '/thing/joinedlist', name: '已创建' }]} />
       <Card>
         <Table
           loading={loading}
@@ -133,16 +133,12 @@ const ThingJoinedList = ({ history }) => {
               ` 共 ${total} 条，第 ${range[0]}-${range[1]} 条`,
             onChange: (page, pageSize) => {
               setPageCurrent(page);
-              form.validateFields().then(values => {
-                getJoinedThings(page, pageSize, values);
-              });
+              getCreatedThings(page, pageSize);
             },
             onShowSizeChange: (page, size) => {
               setPageCurrent(1);
               setPageSize(size);
-              form.validateFields().then(values => {
-                getJoinedThings(1, size, values);
-              });
+              getCreatedThings(1, size);
             }
           }}
           columns={columns}
@@ -150,8 +146,8 @@ const ThingJoinedList = ({ history }) => {
           rowKey={row => row.id}
         />
       </Card>
-    </div>
+    </>
   );
 };
 
-export default ThingJoinedList;
+export default ThingCreatedList;

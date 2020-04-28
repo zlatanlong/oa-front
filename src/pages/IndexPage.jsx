@@ -3,7 +3,7 @@ import { connect } from 'dva';
 import Frame from '../components/Frame/Index.jsx';
 import { Route, Switch, Redirect } from 'dva/router';
 import { adminRoutes, mainRoutes } from '../routes';
-import http from '../utils/axios.js';
+// import http from '../utils/axios.js';
 
 /**
  * 子路由
@@ -11,22 +11,23 @@ import http from '../utils/axios.js';
  */
 function IndexPage({ dispatch, userInfo }) {
   useEffect(() => {
-    http
-      .post('/user')
-      .then(res => {
-        if (res.data.code === 0) {
-          dispatch({
-            type: 'userInfo/save',
-            isLogined: true,
-            data: res.data.data
-          });
-        } else {
-          console.log('res.data.data', res.data.data);
-        }
-      })
-      .catch(err => {
-        console.log(err);
-      });
+    console.log('执行一次index');
+    // http
+    //   .post('/user')
+    //   .then(res => {
+    //     if (res.data.code === 0) {
+    //       dispatch({
+    //         type: 'userInfo/save',
+    //         isLogined: true,
+    //         data: res.data.data
+    //       });
+    //     } else {
+    //       console.log('res.data.data', res.data.data);
+    //     }
+    //   })
+    //   .catch(err => {
+    //     console.log(err);
+    //   });
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 

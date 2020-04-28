@@ -1,28 +1,30 @@
-import React, { useEffect, useState } from 'react';
 import {
-  Typography,
+  CalendarOutlined,
+  TagOutlined,
+  UploadOutlined,
+  UserOutlined
+} from '@ant-design/icons';
+import {
+  Button,
   Card,
+  Divider,
   Form,
   Input,
-  Button,
-  Divider,
-  Skeleton,
   message,
+  Typography,
   Upload
 } from 'antd';
-import http from '../../utils/axios';
-import moment from 'moment';
 import { connect } from 'dva';
-import {
-  TagOutlined,
-  UserOutlined,
-  CalendarOutlined,
-  UploadOutlined
-} from '@ant-design/icons';
+import moment from 'moment';
+import React, { useEffect, useState } from 'react';
+import http from '../../utils/axios';
+import ThingFileShow from '../../components/Thing/ThingFileShow';
+import BreadNav from '../../components/Frame/BreadNav';
 
 const { Title, Paragraph } = Typography;
 
-const ThingJoined = ({ match, userInfo }) => {
+const ThingJoined = ({ match, userInfo, location }) => {
+  const [loading, setLoading] = useState(true);
   const [thing, setThing] = useState({});
   const [ifFinished, setIfFinished] = useState(null);
   const [thingReceiver, setThingReceiver] = useState({});
@@ -54,6 +56,8 @@ const ThingJoined = ({ match, userInfo }) => {
           setThingFileList(res.data.data.files);
           if (res.data.data.thing.needFinish === '1') {
             getIfFinished();
+          } else {
+            setLoading(false);
           }
         }
       })
@@ -72,6 +76,8 @@ const ThingJoined = ({ match, userInfo }) => {
           setIfFinished(res.data.data);
           if (res.data.data) {
             getFinishedThing();
+          } else {
+            setLoading(false);
           }
         }
       })
@@ -86,12 +92,14 @@ const ThingJoined = ({ match, userInfo }) => {
       .post('/thing/finished/get', {
         thingId: parseInt(match.params.id, 10),
         // userId: userInfo.info.id
+        // todo
         userId: 6
       })
       .then(res => {
         if (res.data.code === 0) {
           setThingReceiver(res.data.data.thingReceiver);
           setFinishFileList(res.data.data.files);
+          setLoading(false);
         }
       })
       .catch(err => {
@@ -152,150 +160,125 @@ const ThingJoined = ({ match, userInfo }) => {
   };
 
   return (
-    <Card>
-      <Typography>
-        <Title level={2}>{thing.title}</Title>
-        <Skeleton loading={thing.title === null || thing.title === undefined} />
-        <Paragraph>
-          <div style={{ margin: '1rem 0' }}>
-            <TagOutlined />
-            <span style={{ margin: '0 30px 0 4px' }}>
-              标签：{thing.tagName}
-            </span>
-            <UserOutlined />
-            <span style={{ margin: '0 30px 0 4px' }}>
-              发起人：{thing.realName}
-            </span>
-            <CalendarOutlined />
-            <span style={{ margin: '0 30px 0 4px' }}>
-              事务发布时间：
-              {moment(thing.createTime).format('YYYY-MM-DD HH:mm')}
-            </span>
-          </div>
-          <ul>
-            {thing.startTime !== null && (
-              <li>
-                事务开始时间：
-                {moment(thing.startTime).format('YYYY-MM-DD HH:mm')}
-              </li>
-            )}
-            {thing.endTime !== null && (
-              <li>
-                事务结束时间：
-                {moment(thing.endTime).format('YYYY-MM-DD HH:mm:ss')}
-              </li>
-            )}
-            <li>
-              是否需要完成：
-              {thing.needFinish === '1' ? (
-                <span style={{ color: 'blue' }}>是</span>
-              ) : (
-                '否'
-              )}
-            </li>
-            {thing.needFinish === '1' && (
-              <li>
-                是否需要回答：
-                {thing.needAnswer === '1' ? (
-                  <span style={{ color: 'blue' }}>是</span>
-                ) : (
-                  '否'
-                )}
-              </li>
-            )}
-            {thing.needFinish === '1' && (
-              <li>
-                是否需要回复文件：
-                {thing.needFileReply === '1' ? (
-                  <span style={{ color: 'blue' }}>是</span>
-                ) : (
-                  '否'
-                )}
-              </li>
-            )}
-          </ul>
-        </Paragraph>
-
-        <Title level={4}>内容：</Title>
-        <Skeleton
-          loading={thing.content === null || thing.content === undefined}
-        />
-        <Paragraph>{thing.content}</Paragraph>
-        {Array.isArray(thingFileList) && thingFileList.length > 0 && (
-          <div>
-            <div style={{ color: 'red' }}>
-              共 {thingFileList.length} 附件:点击下载
+    <>
+      <BreadNav
+        navs={[
+          { url: '/thing/joinedlist', name: '日程表' },
+          { url: location.pathname, name: thing.title }
+        ]}
+      />
+      <Card loading={loading}>
+        <Typography>
+          <Title level={2}>{thing.title}</Title>
+          <Paragraph>
+            <div style={{ margin: '1rem 0' }}>
+              <TagOutlined />
+              <span style={{ margin: '0 30px 0 4px' }}>
+                标签：{thing.tagName}
+              </span>
+              <UserOutlined />
+              <span style={{ margin: '0 30px 0 4px' }}>
+                发起人：{thing.realName}
+              </span>
+              <CalendarOutlined />
+              <span style={{ margin: '0 30px 0 4px' }}>
+                事务发布时间：
+                {moment(thing.createTime).format('YYYY-MM-DD HH:mm')}
+              </span>
             </div>
-            {thingFileList.map(file => (
-              <div key={file.fileUrl}>
-                <a
-                  href={file.fileUrl}
-                  download={file.originName}
-                  target='_blank'
-                  rel='noopener noreferrer'>
-                  {file.originName}
-                </a>
-              </div>
-            ))}
+            <ul>
+              {thing.startTime !== null && (
+                <li>
+                  事务开始时间：
+                  {moment(thing.startTime).format('YYYY-MM-DD HH:mm')}
+                </li>
+              )}
+              {thing.endTime !== null && (
+                <li>
+                  事务结束时间：
+                  {moment(thing.endTime).format('YYYY-MM-DD HH:mm:ss')}
+                </li>
+              )}
+              <li>
+                是否需要完成：
+                {thing.needFinish === '1' ? (
+                  <span style={{ color: 'blue' }}>是</span>
+                ) : (
+                  '否'
+                )}
+              </li>
+              {thing.needFinish === '1' && (
+                <li>
+                  是否需要回答：
+                  {thing.needAnswer === '1' ? (
+                    <span style={{ color: 'blue' }}>是</span>
+                  ) : (
+                    '否'
+                  )}
+                </li>
+              )}
+              {thing.needFinish === '1' && (
+                <li>
+                  是否需要回复文件：
+                  {thing.needFileReply === '1' ? (
+                    <span style={{ color: 'blue' }}>是</span>
+                  ) : (
+                    '否'
+                  )}
+                </li>
+              )}
+            </ul>
+          </Paragraph>
+
+          <Title level={4}>内容：</Title>
+          <Paragraph>{thing.content}</Paragraph>
+          {Array.isArray(thingFileList) && thingFileList.length > 0 && (
+            <ThingFileShow files={thingFileList} />
+          )}
+        </Typography>
+        {thing.needFinish === '1' && ifFinished === false && (
+          <div>
+            <Divider />
+            <Title level={4}>回复：</Title>
+            <Form name='joinThing' onFinish={onFinish} {...layout}>
+              {thing.needFileReply === '1' && (
+                <Form.Item label='选择文件上传'>
+                  <Upload {...fileUploadProps}>
+                    <Button>
+                      <UploadOutlined />
+                      点击上传(多次点击可以上传多个)
+                    </Button>
+                  </Upload>
+                </Form.Item>
+              )}
+              <Form.Item label='回复内容' name='content'>
+                <Input.TextArea />
+              </Form.Item>
+              <Form.Item {...tailLayout}>
+                <Button type='primary' htmlType='submit'>
+                  完成
+                </Button>
+              </Form.Item>
+            </Form>
           </div>
         )}
-      </Typography>
-      {thing.needFinish === '1' && ifFinished === false && (
-        <div>
-          <Divider />
-          <Title level={4}>回复：</Title>
-          <Form name='joinThing' onFinish={onFinish} {...layout}>
-            {thing.needFileReply === '1' && (
-              <Form.Item label='选择文件上传'>
-                <Upload {...fileUploadProps}>
-                  <Button>
-                    <UploadOutlined />
-                    点击上传(多次点击可以上传多个)
-                  </Button>
-                </Upload>
-              </Form.Item>
+        {thing.needFinish === '1' && ifFinished === true && (
+          <div>
+            <Title level={4} style={{ color: 'green' }}>
+              已回复：
+            </Title>
+            {thingReceiver.content !== undefined &&
+            thingReceiver.content !== '' &&
+            thingReceiver.content !== null
+              ? thingReceiver.content
+              : ''}
+            {Array.isArray(finishFileList) && finishFileList.length > 0 && (
+              <ThingFileShow files={finishFileList} />
             )}
-            <Form.Item label='回复内容' name='content'>
-              <Input.TextArea />
-            </Form.Item>
-            <Form.Item {...tailLayout}>
-              <Button type='primary' htmlType='submit'>
-                完成
-              </Button>
-            </Form.Item>
-          </Form>
-        </div>
-      )}
-      {thing.needFinish === '1' && ifFinished === true && (
-        <div>
-          <Title level={4} style={{ color: 'green' }}>
-            已回复：
-          </Title>
-          {thingReceiver.content !== undefined &&
-          thingReceiver.content !== '' &&
-          thingReceiver.content !== null
-            ? thingReceiver.content
-            : ''}
-          {Array.isArray(finishFileList) && finishFileList.length > 0 && (
-            <div>
-              <p>已上传文件:点击下载</p>
-              {finishFileList.map(file => (
-                <div>
-                  <a
-                    key={file.fileUrl}
-                    href={file.fileUrl}
-                    download
-                    target='_blank'
-                    rel='noopener noreferrer'>
-                    {file.originName}
-                  </a>
-                </div>
-              ))}
-            </div>
-          )}
-        </div>
-      )}
-    </Card>
+          </div>
+        )}
+      </Card>
+    </>
   );
 };
 

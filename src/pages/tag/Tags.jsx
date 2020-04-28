@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import http from '../../utils/axios';
 import { Tree, Card, Button, Divider, Modal, Input, message } from 'antd';
+import BreadNav from '../../components/Frame/BreadNav';
 
 const getAvalibleTags = () => {
   return http.post('/tag/tags');
@@ -11,6 +12,7 @@ const getCreatedTag = () => {
 };
 
 const Tags = props => {
+  const [loading, setLoading] = useState(false);
   const [tags, setTags] = useState([]);
   const [myTags, setMyTags] = useState([]);
   const [showUpdateModal, setShowUpdateModal] = useState(false);
@@ -24,9 +26,11 @@ const Tags = props => {
   }, []);
 
   const getAllData = () => {
+    setLoading(true);
     Promise.all([getAvalibleTags(), getCreatedTag()])
       .then(res => {
         if (res[0].data.code === 0 && res[1].data.code === 0) {
+          setLoading(false);
           const avaTags = res[0].data.data;
           const creTags = res[1].data.data;
           const creTagIDs = creTags.map(tag => tag.id);
@@ -105,12 +109,14 @@ const Tags = props => {
 
   return (
     <div>
+      <BreadNav navs={[{ url: '/tag/list', name: '可用标签' }]} />
       <Card
+        loading={loading}
         title='我的标签：'
         extra={
           <Button
             onClick={() => {
-              props.history.push(`/tag/edit/0`);
+              props.history.push(`/tag/edit`);
             }}
             type='primary'>
             新建私有标签

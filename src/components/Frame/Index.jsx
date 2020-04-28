@@ -1,23 +1,23 @@
-import { Layout, Menu, Dropdown, Avatar, message, Space } from 'antd';
-import React, { useEffect, useState } from 'react';
-import { withRouter } from 'dva/router';
-import { connect } from 'dva';
 import {
-  DownOutlined,
-  UserOutlined,
   CarryOutOutlined,
-  TeamOutlined,
-  UserSwitchOutlined,
-  SettingOutlined,
+  DownOutlined,
   LogoutOutlined,
-  TagsOutlined,
+  SettingOutlined,
   SettingTwoTone,
-  SmileOutlined
+  SmileOutlined,
+  TagsOutlined,
+  TeamOutlined,
+  UserOutlined,
+  UserSwitchOutlined
 } from '@ant-design/icons';
+import { Avatar, Dropdown, Layout, Menu, message, Space } from 'antd';
+import { connect } from 'dva';
+import { withRouter } from 'dva/router';
+import React, { useEffect, useState } from 'react';
 import Logo from '../../assets/logo.png';
 import { routesGroup } from '../../routes';
-import style from './frame.css';
 import { clearToken } from '../../utils/authc';
+import style from './frame.css';
 
 const { Header, Content, Sider } = Layout;
 const { SubMenu } = Menu;
@@ -246,11 +246,11 @@ function Index(props) {
             </SubMenu>
           </Menu>
         </Sider>
-        <Layout style={{ padding: '0 16px 16px' }}>
+        <Layout style={{ padding: '0' }}>
           <Content
             className='site-layout-background'
             style={{
-              padding: 24,
+              padding: '40px 30px',
               margin: 0,
               minHeight: 280
             }}>
