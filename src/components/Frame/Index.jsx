@@ -18,6 +18,7 @@ import Logo from '../../assets/logo.png';
 import { routesGroup } from '../../routes';
 import { clearToken } from '../../utils/authc';
 import style from './frame.css';
+import http from '../../utils/axios';
 
 const { Header, Content, Sider } = Layout;
 const { SubMenu } = Menu;
@@ -31,42 +32,52 @@ function Index(props) {
   const [testRoutes, setTestRoutes] = useState([]);
 
   useEffect(() => {
-    // let userPermissionUrlSet = [];
-    // let permissionSet = [...props.userInfo.info.permissionSet];
-    // permissionSet.forEach(
-    //   permission => {
-    //     userPermissionUrlSet.push(permission.frontRoute);
-    //   }
-    // );
+    let userPermissionUrlSet = [];
+    let permissionSet = [...props.userInfo.info.permissionSet];
+    permissionSet.forEach(permission => {
+      userPermissionUrlSet.push(permission.frontRoute);
+    });
     // 从 userPermissionSet 中 解除对应route的受控
-    // for (const key in routesGroup) {
-    //   if (routesGroup.hasOwnProperty(key)) {
-    //     const routes = routesGroup[key];
-    //     routes.forEach(
-    //       route => {
-    //         if (userPermissionUrlSet.indexOf(route.path) !== -1) {
-    //           route.controlled = false;
-    //         }
-    //       }
-    //     )
-    //   }
-    // }
-    // setThingRoutes(routesGroup.thingRoutes.filter(route => route.isShow && !route.controlled))
-    // setTeamRoutes(routesGroup.teamRoutes.filter(route => route.isShow && !route.controlled))
-    // setRoleRoutes(routesGroup.roleRoutes.filter(route => route.isShow && !route.controlled))
-    // setTagRoutes(routesGroup.tagRoutes.filter(route => route.isShow && !route.controlled))
-    // setUserOperateRoutes(routesGroup.userOperateRoutes.filter(route => route.isShow && !route.controlled))
-    // setTestRoutes(routesGroup.testRoutes.filter(route => route.isShow && !route.controlled))
+    for (const key in routesGroup) {
+      if (routesGroup.hasOwnProperty(key)) {
+        const routes = routesGroup[key];
+        routes.forEach(route => {
+          if (userPermissionUrlSet.indexOf(route.path) !== -1) {
+            route.controlled = false;
+          }
+        });
+      }
+    }
+    setThingRoutes(
+      routesGroup.thingRoutes.filter(route => route.isShow && !route.controlled)
+    );
+    setTeamRoutes(
+      routesGroup.teamRoutes.filter(route => route.isShow && !route.controlled)
+    );
+    setRoleRoutes(
+      routesGroup.roleRoutes.filter(route => route.isShow && !route.controlled)
+    );
+    setTagRoutes(
+      routesGroup.tagRoutes.filter(route => route.isShow && !route.controlled)
+    );
+    setUserOperateRoutes(
+      routesGroup.userOperateRoutes.filter(
+        route => route.isShow && !route.controlled
+      )
+    );
+    setTestRoutes(
+      routesGroup.testRoutes.filter(route => route.isShow && !route.controlled)
+    );
 
     // 测试阶段
-    setThingRoutes(routesGroup.thingRoutes.filter(route => route.isShow));
-    setTeamRoutes(routesGroup.teamRoutes.filter(route => route.isShow));
-    setRoleRoutes(routesGroup.roleRoutes.filter(route => route.isShow));
-    setTagRoutes(routesGroup.tagRoutes.filter(route => route.isShow));
-    setUserOperateRoutes(
-      routesGroup.userOperateRoutes.filter(route => route.isShow)
-    );
-    setTestRoutes(routesGroup.testRoutes.filter(route => route.isShow));
+    // setThingRoutes(routesGroup.thingRoutes.filter(route => route.isShow));
+    // setTeamRoutes(routesGroup.teamRoutes.filter(route => route.isShow));
+    // setRoleRoutes(routesGroup.roleRoutes.filter(route => route.isShow));
+    // setTagRoutes(routesGroup.tagRoutes.filter(route => route.isShow));
+    // setUserOperateRoutes(
+    //   routesGroup.userOperateRoutes.filter(route => route.isShow)
+    // );
+    // setTestRoutes(routesGroup.testRoutes.filter(route => route.isShow));
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
@@ -75,12 +86,22 @@ function Index(props) {
     <Menu
       onClick={p => {
         if (p.key === 'logOut') {
-          props.history.push('/login');
-          props.dispatch({
-            type: 'userInfo/save',
-            isLogined: false
-          });
-          clearToken();
+          http
+            .post('/user/logout')
+            .then(res => {
+              if (res.data.code === 0) {
+                // 一定要先清除token
+                clearToken();
+                props.history.push('/login');
+                props.dispatch({
+                  type: 'userInfo/save',
+                  isLogined: false
+                });
+              }
+            })
+            .catch(err => {
+              console.log(err);
+            });
         } else if (p.key === 'info') {
           props.history.push('/u/info');
         } else {

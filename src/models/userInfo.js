@@ -3,7 +3,7 @@ export default {
 
   state: {
     // TODO 改回来到时候
-    isLogined: true,
+    isLogined: false,
     info: {}
   },
 

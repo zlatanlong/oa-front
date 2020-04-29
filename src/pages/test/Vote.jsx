@@ -1,139 +1,185 @@
-import React, { useState, useEffect } from 'react';
-import { Card, Button, Input, Radio, Checkbox, Modal, message, Tabs, Alert } from 'antd';
-
-const CheckboxGroup = Checkbox.Group;
-const { TabPane } = Tabs;
-
+import { Button, Card, Form, Input, message, Modal, Radio } from 'antd';
+import React, { useState } from 'react';
 
 const Vote = () => {
-  const [votesTitle] = useState('2018学习成绩统计');
-  const [votes, setVotes] = useState([]);
-  const [modalVisible, setModalVisible] = useState(false);
-  const [currentVote, setCurrentVote] = useState({ type: 0, inputs: [], options: [], checkBoxs: [] });
-  const [tempInput, setTempInput] = useState('');
-  const [tempOption, setTempOption] = useState('');
-  const [tempCheckBox, setTempCheckBox] = useState('');
+  const [questionForm] = Form.useForm();
+  const [optionForm] = Form.useForm();
+  const [questions, setQuestions] = useState([]);
+  const [currentIndex, setCurrentIndex] = useState(0);
+  const [questModalVisible, setQuestionModalVisible] = useState(false);
+  const [optionModalVisible, setOptionModalVisible] = useState(false);
 
-  // 展示数据格式
-  // let temp = [
-  //   {
-  //     title: '你的其中考试成绩如何?',
-  //     type: 0,
-  //     inputs: ['语文', '数学', '英语',]
-  //   }, {
-  //     title: '你觉得那个老师更好?',
-  //     type: 1,
-  //     options: ['语文老师', '数学老师', '政治老师',]
-  //   }, {
-  //     title: '你更喜欢哪个科目?',
-  //     type: 2,
-  //     checkBoxs: ['数学', '英语', '计算机']
-  //   }
-  // ]
-
-  const onAddVote = () => {
-    setModalVisible(true)
-  }
-
-  const handleOk = e => {
-    votes.push(currentVote)
-    setCurrentVote({ type: currentVote.type, inputs: [], options: [], checkBoxs: [] })
-    setVotes([...votes])
-    message.success('添加成功')
-    setModalVisible(false)
+  const handleCreateQuestionOk = e => {
+    questionForm
+      .validateFields()
+      .then(value => {
+        questionForm.resetFields();
+        setQuestions([...questions, value]);
+        setQuestionModalVisible(false);
+        message.success('添加成功');
+      })
+      .catch(info => {
+        console.log('Validate Failed:', info);
+      });
   };
 
-  const handleCancel = e => {
-    setModalVisible(false)
+  const handleAddOption = () => {
+    optionForm
+      .validateFields()
+      .then(values => {
+        optionForm.resetFields();
+        let tempQuestions = questions;
+        const tempOptions = tempQuestions[currentIndex].options;
+        tempQuestions[currentIndex].options =
+          tempOptions === undefined
+            ? [values]
+            : [...tempQuestions[currentIndex].options, values];
+        setQuestions(tempQuestions);
+        setOptionModalVisible(false);
+      })
+      .catch(info => {
+        console.log('Validate Failed:', info);
+      });
   };
 
-  useEffect(() => {
-    let tempVotes = JSON.parse(localStorage.getItem('votes'));
-    if (tempVotes !== undefined) {
-      setVotes(tempVotes);
-    }
-  }, []);
+  const questionModal = (
+    <Modal
+      title='添加题目'
+      visible={questModalVisible}
+      onOk={handleCreateQuestionOk}
+      onCancel={() => setQuestionModalVisible(false)}>
+      <Form
+        form={questionForm}
+        name='questionForm'
+        onValuesChange={(_, { replyType }) => {
+          // console.log(replyType);
+        }}
+        initialValues={{ replyType: 1 }}>
+        <Form.Item
+          name='title'
+          label='问题类型'
+          rules={[
+            {
+              required: true,
+              message: '请输入问题题目!'
+            }
+          ]}>
+          <Input />
+        </Form.Item>
+        <Form.Item
+          name='replyType'
+          label='问题题目'
+          rules={[
+            {
+              required: true,
+              message: '请选择问题类型!'
+            }
+          ]}>
+          <Radio.Group
+            onChange={e => {
+              console.log(e.target.value);
+            }}>
+            <Radio value={1}>单选</Radio>
+            <Radio value={2}>多选</Radio>
+            <Radio value={3}>数字填空</Radio>
+            <Radio value={4}>常规填空</Radio>
+          </Radio.Group>
+        </Form.Item>
+      </Form>
+    </Modal>
+  );
 
-  useEffect(() => {
-    localStorage.setItem('votes', JSON.stringify(votes));
-    message.info('已保存')
-    // const myInterval = setInterval(() => {
-    // }, 3000);
-    // return () => { clearInterval(myInterval); }
-  }, [votes]);
-
-
+  const optionModal = (
+    <Modal
+      title={`为${
+        questions[currentIndex] ? questions[currentIndex].title : ''
+      }添加选项`}
+      visible={optionModalVisible}
+      onOk={handleAddOption}
+      onCancel={() => {
+        setOptionModalVisible(false);
+      }}>
+      <Form form={optionForm} name='optionForm'>
+        <Form.Item
+          name='content'
+          label='选项内容'
+          rules={[
+            {
+              required: true,
+              message: '请输入选项内容!'
+            }
+          ]}>
+          <Input />
+        </Form.Item>
+      </Form>
+    </Modal>
+  );
 
   return (
-    <Card title={votesTitle} extra={<Button onClick={onAddVote}>添加题目</Button>}>
-      <Modal
-        title="添加题目"
-        visible={modalVisible}
-        onOk={handleOk}
-        onCancel={handleCancel}
-      >
-        <Input addonBefore='问题编号' type='number' value={currentVote.number} onChange={e => { setCurrentVote({ ...currentVote, number: e.target.value }) }} />
-        <Input addonBefore='问题题目' value={currentVote.title} onChange={e => { setCurrentVote({ ...currentVote, title: e.target.value }) }} />
-        <Alert message="请选择以下三种题目类型之一" type="info" />
-        <Tabs defaultActiveKey="0" onChange={key => { setCurrentVote({ ...currentVote, type: parseInt(key, 10) }) }}>
-          <TabPane tab="填空题" key="0">
-            <div style={{ display: "flex" }}>
-              <Input placeholder='填空题目' value={tempInput} onChange={e => { setTempInput(e.target.value) }} size="small" />
-              <Button onClick={() => { currentVote.inputs.push(tempInput); setCurrentVote({ ...currentVote, inputs: currentVote.inputs }); setTempInput('') }}>+</Button>
-            </div>
-            <span>已添加:</span>
-            {currentVote.inputs.map(input => <Input placeholder={input} disabled />)}
-          </TabPane>
-          <TabPane tab="单选题" key="1">
-            <div style={{ display: "flex" }}>
-              <Input placeholder='选项内容' value={tempOption} onChange={e => { setTempOption(e.target.value) }} size="small" />
-              <Button onClick={() => { currentVote.options.push(tempOption); setCurrentVote({ ...currentVote, options: currentVote.options }); setTempOption('') }}>+</Button>
-            </div>
-            <span>已添加:</span>
-            {currentVote.options.map(option => <Radio disabled>{option}</Radio>)}
-          </TabPane>
-          <TabPane tab="多选题" key="2">
-            <div style={{ display: "flex" }}>
-              <Input placeholder='选项内容' value={tempCheckBox} onChange={e => { setTempCheckBox(e.target.value) }} size="small" />
-              <Button onClick={() => { currentVote.checkBoxs.push(tempCheckBox); setCurrentVote({ ...currentVote, checkBoxs: currentVote.checkBoxs }); setTempCheckBox('') }}>+</Button>
-            </div>
-            <span>已添加:</span>
-            {currentVote.checkBoxs.map(checkBox => <Checkbox disabled>{checkBox}</Checkbox>)}
-          </TabPane>
-        </Tabs>
-      </Modal>
-      {votes.map(vote => {
+    <Card
+      title='添加提问'
+      extra={
+        <Button
+          onClick={() => {
+            setQuestionModalVisible(true);
+          }}>
+          添加题目
+        </Button>
+      }>
+      {questionModal}
+      {optionModal}
+      {questions.map((question, index) => {
+        return (
+          <div key={question.title}>
+            <span>
+              {index + 1}. {question.title}
+            </span>
+            <Button
+              onClick={() => {
+                setCurrentIndex(index);
+                setOptionModalVisible(true);
+              }}>
+              添加选项
+            </Button>
+            {question.options !== undefined &&
+              question.options.map(option => (
+                <span key={option.content}>{option.content}</span>
+              ))}
+          </div>
+        );
+      })}
+      {/* {votes.map(vote => {
         switch (vote.type) {
           case 0:
             return (
               <Card title={vote.number + '.' + vote.title}>
                 {vote.inputs.map(input => {
-                  return (<Input addonBefore={input} size='small' disabled />)
+                  return <Input addonBefore={input} size='small' disabled />;
                 })}
               </Card>
-            )
+            );
           case 1:
             return (
               <Card title={vote.number + '.' + vote.title}>
                 <Radio.Group disabled>
                   {vote.options.map(option => {
-                    return (<Radio value={option}>{option}</Radio>)
+                    return <Radio value={option}>{option}</Radio>;
                   })}
                 </Radio.Group>
               </Card>
-            )
+            );
           case 2:
             return (
               <Card title={vote.number + '.' + vote.title}>
                 <CheckboxGroup options={vote.checkBoxs} disabled />
               </Card>
-            )
+            );
           default:
             return <div></div>;
         }
-      })}
+      })} */}
     </Card>
   );
-}
+};
 
-export default Vote;  
+export default Vote;

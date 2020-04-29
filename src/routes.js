@@ -1,9 +1,5 @@
 import Login from './pages/Login';
-import Index from './pages/admin/Index';
-import Products from './pages/test/Products';
 import PageNotFound from './pages/PageNotFound';
-import Routines from './pages/test/Routines';
-import Edit from './pages/test/Edit';
 import UserAdd from './pages/user/UserAdd';
 import Vote from './pages/test/Vote';
 import PersonalInfo from './pages/personal/PersonalInfo';
@@ -24,6 +20,7 @@ import ThingCreatedList from './pages/thing/ThingCreatedList';
 import ThingCreated from './pages/thing/ThingCreated';
 import ThingUserReply from './pages/thing/ThingUserReply';
 import TagEditPublic from './pages/tag/TagEditPublic';
+import ThingAddPersonal from './pages/thing/ThingAddPersonal';
 
 export const mainRoutes = [
   {
@@ -85,7 +82,7 @@ export const thingRoutes = [
   },
   {
     path: '/thing/personalEdit',
-    component: Index,
+    component: ThingAddPersonal,
     exact: true,
     isShow: true,
     title: '创建个人事务'
@@ -212,27 +209,6 @@ export const testRoutes = [
     exact: true,
     isShow: true,
     title: '投票模块'
-  },
-  {
-    path: '/test/products',
-    component: Products,
-    exact: true,
-    isShow: true,
-    title: 'products'
-  },
-  {
-    path: '/test/routines',
-    component: Routines,
-    exact: true,
-    isShow: true,
-    title: 'Routines'
-  },
-  {
-    path: '/test/edit',
-    component: Edit,
-    exact: true,
-    isShow: false,
-    title: 'Edit'
   }
 ];
 
