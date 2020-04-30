@@ -7,6 +7,7 @@ import ThingAddUsers from '../../components/Thing/ThingAddUsers';
 import ThingAddShow from '../../components/Thing/ThingAddShow';
 import http from '../../utils/axios';
 import BreadNav from '../../components/Frame/BreadNav';
+import ThingAddQuestion from '../../components/Thing/ThingAddQuestion';
 
 const { Step } = Steps;
 
@@ -41,7 +42,7 @@ const ThingAdd = ({ addThing, dispatch, history }) => {
     {
       key: 4,
       title: '创建问答',
-      content: <ThingAddShow />
+      content: <ThingAddQuestion saveThingChange={saveThingChange} />
     },
     {
       key: 5,
@@ -78,19 +79,18 @@ const ThingAdd = ({ addThing, dispatch, history }) => {
         message.error('请选择小组！');
         return false;
       }
-    } else {
-      if (data.receiverIds.length === 0) {
-        message.error('请选择接收者！');
-        return false;
-      }
+    } else if (data.receiverIds.length === 0) {
+      message.error('请选择接收者！');
+      return false;
+    } else if (data.needAnswer === '1' && data.questions.length === 0) {
+      message.error('请添加问题！');
+      return false;
     }
-
     return true;
   };
 
   const handleAddThing = () => {
     if (validThing()) {
-      console.log('addThing', addThing);
       let formData = new FormData();
       formData.append('title', addThing.title);
       formData.append('content', addThing.content);
@@ -116,7 +116,7 @@ const ThingAdd = ({ addThing, dispatch, history }) => {
           formData.append('files', file);
         });
       }
-      formData.append('questionsJSON', addThing.questionsJSON);
+      formData.append('questionsJSON', JSON.stringify(addThing.questions));
       const config = {
         headers: {
           'Content-Type': 'multipart/form-data'
@@ -126,12 +126,16 @@ const ThingAdd = ({ addThing, dispatch, history }) => {
         .post('/thing', formData, config)
         .then(res => {
           if (res.data.code === 0) {
-            message.success('发布成功！');
+            setCurrent(0);
             dispatch({ type: 'addThing/init' });
+            message.success('发布成功！');
             history.push('/thing/createdlist');
+          } else {
+            message.error(res.data.msg);
           }
         })
         .catch(err => {
+          message.error('服务器开小差了');
           console.log(err);
         });
     }
@@ -152,6 +156,9 @@ const ThingAdd = ({ addThing, dispatch, history }) => {
         </Steps>
       </Card>
       <Card>
+        {/* {steps.filter(step =>
+          addThing.showStepKeys.indexOf(step.key) === -1 ? false : true
+        )[current].content} */}
         {
           steps.filter(step =>
             addThing.showStepKeys.indexOf(step.key) === -1 ? false : true

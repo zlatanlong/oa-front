@@ -20,17 +20,20 @@ import React, { useEffect, useState } from 'react';
 import http from '../../utils/axios';
 import ThingFileShow from '../../components/Thing/ThingFileShow';
 import BreadNav from '../../components/Frame/BreadNav';
+import ThingQuestionsShow from '../../components/Thing/ThingQuestionsShow';
 
 const { Title, Paragraph } = Typography;
 
 const ThingJoined = ({ match, userInfo, location }) => {
   const [loading, setLoading] = useState(true);
   const [thing, setThing] = useState({});
+  const [thingFileList, setThingFileList] = useState([]);
+  const [questions, setQuestions] = useState([]);
   const [ifFinished, setIfFinished] = useState(null);
   const [thingReceiver, setThingReceiver] = useState({});
   const [uploadFileList, setUploadFileList] = useState([]);
   const [finishFileList, setFinishFileList] = useState([]);
-  const [thingFileList, setThingFileList] = useState([]);
+  const [answer, setAnswer] = useState({});
 
   const layout = {
     labelCol: { span: 4 },
@@ -54,6 +57,18 @@ const ThingJoined = ({ match, userInfo, location }) => {
         if (res.data.code === 0) {
           setThing(res.data.data.thing);
           setThingFileList(res.data.data.files);
+          const qs = res.data.data.questions;
+          setQuestions(qs);
+          let tempAnswer = {};
+          qs.forEach(q => {
+            tempAnswer[q.id] = {
+              count: q.options.length,
+              maxChoose: q.maxChoose,
+              title: q.title
+            };
+          });
+          setAnswer(tempAnswer);
+
           if (res.data.data.thing.needFinish === '1') {
             getIfFinished();
           } else {
@@ -87,7 +102,6 @@ const ThingJoined = ({ match, userInfo, location }) => {
   };
 
   const getFinishedThing = () => {
-    console.log('userInfo', userInfo);
     http
       .post('/thing/finished/get', {
         thingId: parseInt(match.params.id, 10),
@@ -108,9 +122,29 @@ const ThingJoined = ({ match, userInfo, location }) => {
   };
 
   const validFinish = () => {
-    if (uploadFileList.length === 0) {
+    if (thing.needFileReply === '1' && uploadFileList.length === 0) {
       message.warn('请选择文件');
       return false;
+    } else {
+      for (const questionId in answer) {
+        if (answer.hasOwnProperty(questionId)) {
+          const question = answer[questionId];
+          if (question.replyType === undefined) {
+            message.error(`请回答${question.title}`);
+            break;
+          } else if (question.replyType === '3') {
+            if (Object.keys(question.scores).length !== question.count) {
+              message.error(`请回答${question.title}`);
+              break;
+            }
+          } else if (question.replyType === '4') {
+            if (Object.keys(question.inputTexts).length !== question.count) {
+              message.error(`请回答${question.title}`);
+              break;
+            }
+          }
+        }
+      }
     }
     return true;
   };
@@ -125,6 +159,55 @@ const ThingJoined = ({ match, userInfo, location }) => {
       uploadFileList.forEach(file => {
         data.append('files', file);
       });
+      let answers = [];
+      for (const qId in answer) {
+        if (answer.hasOwnProperty(qId)) {
+          const question = answer[qId];
+          switch (question.replyType) {
+            case '1':
+              answers.push({
+                questionId: qId,
+                questionOptionId: question.optionId
+              });
+              break;
+            case '2':
+              question.optionIds.forEach(id => {
+                answers.push({
+                  questionId: qId,
+                  questionOptionId: id
+                });
+              });
+              break;
+            case '3':
+              for (const oid in question.scores) {
+                if (question.scores.hasOwnProperty(oid)) {
+                  const score = question.scores[oid];
+                  answers.push({
+                    questionId: qId,
+                    questionOptionId: oid,
+                    score
+                  });
+                }
+              }
+              break;
+            case '4':
+              for (const oid in question.inputTexts) {
+                if (question.inputTexts.hasOwnProperty(oid)) {
+                  const inputText = question.inputTexts[oid];
+                  answers.push({
+                    questionId: qId,
+                    questionOptionId: oid,
+                    inputText
+                  });
+                }
+              }
+              break;
+            default:
+              break;
+          }
+        }
+      }
+      data.append('answersJSON', JSON.stringify(answers));
       const config = {
         headers: {
           'Content-Type': 'multipart/form-data'
@@ -157,6 +240,43 @@ const ThingJoined = ({ match, userInfo, location }) => {
       return false;
     },
     fileList: uploadFileList
+  };
+
+  const handleAnswerChange = (question, value) => {
+    let temp = answer;
+    let tempQuestion = temp[question.id];
+    tempQuestion.replyType = question.replyType; // 最后如果哪个题号没有这个属性证明没答题
+    switch (question.replyType) {
+      case '1':
+        tempQuestion.optionId = value;
+        setAnswer(temp);
+        break;
+      case '2':
+        tempQuestion.optionIds = value;
+        setAnswer(temp);
+        break;
+      case '3':
+        let scores = tempQuestion.scores;
+        if (scores === undefined) {
+          scores = {};
+        }
+        scores[value.optionId] = value.score;
+        tempQuestion.scores = scores;
+        setAnswer(temp);
+        break;
+      case '4':
+        let inputTexts = tempQuestion.inputTexts;
+        if (inputTexts === undefined) {
+          inputTexts = {};
+        }
+        inputTexts[value.optionId] = value.inputText;
+        tempQuestion.inputTexts = inputTexts;
+        setAnswer(temp);
+        break;
+      default:
+        break;
+    }
+    // console.log('answer', answer);
   };
 
   return (
@@ -235,6 +355,12 @@ const ThingJoined = ({ match, userInfo, location }) => {
           {Array.isArray(thingFileList) && thingFileList.length > 0 && (
             <ThingFileShow files={thingFileList} />
           )}
+          <Title level={4}>问题：</Title>
+          <ThingQuestionsShow
+            questions={questions}
+            handleAnswerChange={handleAnswerChange}
+            answer={answer}
+          />
         </Typography>
         {thing.needFinish === '1' && ifFinished === false && (
           <div>

@@ -14,14 +14,15 @@ const initData = {
   teamId: null,
   receiverIds: [],
   files: [],
-  questionsJSON: '',
   // fields before here shoule be upload
   showStepKeys: [1, 2, 3, 5],
   tags: [],
   teams: [],
   tagName: '',
   teamName: '',
-  userSearchResult: null
+  userSearchResult: null,
+  questions: [], // should upload as json string
+  currentIndex: 0
 };
 
 export default {

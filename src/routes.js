@@ -1,7 +1,6 @@
 import Login from './pages/Login';
 import PageNotFound from './pages/PageNotFound';
 import UserAdd from './pages/user/UserAdd';
-import Vote from './pages/test/Vote';
 import PersonalInfo from './pages/personal/PersonalInfo';
 import RoleList from './pages/role/RoleList';
 import Role from './pages/role/Role';
@@ -21,6 +20,7 @@ import ThingCreated from './pages/thing/ThingCreated';
 import ThingUserReply from './pages/thing/ThingUserReply';
 import TagEditPublic from './pages/tag/TagEditPublic';
 import ThingAddPersonal from './pages/thing/ThingAddPersonal';
+import ThingAddQuestion from './components/Thing/ThingAddQuestion';
 
 export const mainRoutes = [
   {
@@ -205,7 +205,7 @@ export const userRoutes = [
 export const testRoutes = [
   {
     path: '/test/Vote',
-    component: Vote,
+    component: ThingAddQuestion,
     exact: true,
     isShow: true,
     title: '投票模块'
