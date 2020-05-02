@@ -1,8 +1,8 @@
-import { Checkbox, Col, Input, Radio, Row } from 'antd';
-import React from 'react';
+import { Checkbox, Col, Input, Radio, Row, message } from 'antd';
+import React, { useState } from 'react';
 import { replyTypes } from './ThingAddQuestion';
 
-const ThingAnswer = ({ questions }) => {
+const ThingAnswerResult = ({ questions }) => {
   return (
     <div>
       {questions.map((question, index) => {
@@ -32,60 +32,63 @@ const ThingAnswer = ({ questions }) => {
               </Col>
             </Row>
             <div>
-              {question.answers !== null &&
-                question.answers.length !== 0 &&
+              {question.options !== null &&
+                question.options.length !== 0 &&
                 (() => {
                   switch (question.replyType) {
                     case '1':
                       return (
-                        <Radio disabled>
-                          {question.answers[0].option.content}
-                        </Radio>
+                        <Radio.Group disabled>
+                          {question.options.map((option) => (
+                            <Radio key={option.id} value={option.id}>
+                              {option.content} 选择人数：
+                              <span style={{ color: 'blue' }}>
+                                {option.totalChoose}
+                              </span>
+                            </Radio>
+                          ))}
+                        </Radio.Group>
                       );
                     case '2':
                       return (
-                        <>
-                          {question.answers.map((answer) => (
-                            <Checkbox disabled key={answer.id}>
-                              {answer.option.content}
+                        <Checkbox.Group disabled>
+                          {question.options.map((option) => (
+                            <Checkbox
+                              key={option.id}
+                              value={option.id.toString()}>
+                              {option.content} 选择人数：
+                              <span style={{ color: 'blue' }}>
+                                {option.totalChoose}
+                              </span>
                             </Checkbox>
                           ))}
-                        </>
+                        </Checkbox.Group>
                       );
                     case '3':
                       return (
-                        <>
-                          {question.answers.map((answer) => (
-                            <Row key={answer.id} style={{ margin: '2px 0' }}>
+                        <div>
+                          {question.options.map((option) => (
+                            <Row key={option.id} style={{ margin: '2px 0' }}>
                               <Col span={4}>
-                                <span>{answer.option.content}：</span>
+                                <span>{option.content}：</span>
                               </Col>
                               <Col>
-                                <Input
-                                  disabled
-                                  placeholder={answer.score}
-                                  size='small'
-                                  type='number'
-                                />
+                                <Input size='small' type='number' disabled />
                               </Col>
                             </Row>
                           ))}
-                        </>
+                        </div>
                       );
                     case '4':
                       return (
                         <div>
-                          {question.answers.map((answer) => (
-                            <Row key={answer.id} style={{ margin: '2px 0' }}>
+                          {question.options.map((option) => (
+                            <Row key={option.id} style={{ margin: '2px 0' }}>
                               <Col span={4}>
-                                <span>{answer.option.content}：</span>
+                                <span>{option.content}：</span>
                               </Col>
                               <Col span={16}>
-                                <Input
-                                  disabled
-                                  placeholder={answer.inputText}
-                                  size='small'
-                                />
+                                <Input size='small' disabled />
                               </Col>
                             </Row>
                           ))}
@@ -103,4 +106,4 @@ const ThingAnswer = ({ questions }) => {
   );
 };
 
-export default ThingAnswer;
+export default ThingAnswerResult;

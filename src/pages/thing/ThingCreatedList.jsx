@@ -16,14 +16,14 @@ const ThingCreatedList = ({ history }) => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  const formatDate = date => {
+  const formatDate = (date) => {
     if (date === null) {
       return '无';
     }
     return moment(date).format('M月D日 HH:mm');
   };
 
-  const map01toNY = text => {
+  const map01toNY = (text) => {
     return text === '1' ? <span style={{ color: 'blue' }}>是</span> : '否';
   };
 
@@ -39,11 +39,11 @@ const ThingCreatedList = ({ history }) => {
           onClick={() => history.push(`/thing/created/${record.id}`)}>
           {text}
         </Button>
-      )
+      ),
     },
     {
       title: '标签',
-      dataIndex: 'tagName'
+      dataIndex: 'tagName',
     },
     {
       title: '阅读',
@@ -58,7 +58,7 @@ const ThingCreatedList = ({ history }) => {
             {`${record.readCount}/${record.receiversCount}`}
           </span>
         );
-      }
+      },
     },
     {
       title: '完成',
@@ -68,36 +68,42 @@ const ThingCreatedList = ({ history }) => {
           return '';
         }
         return `${record.finishedCount}/${record.receiversCount}`;
-      }
+      },
     },
 
     {
       title: '回答',
       dataIndex: 'needAnswer',
-      render: map01toNY
+      render: (text) => {
+        return text === '1' ? (
+          <span style={{ color: 'orange' }}>有</span>
+        ) : (
+          '无'
+        );
+      },
     },
     {
       title: '附件',
       dataIndex: 'needFinish',
-      render: text => {
+      render: (text) => {
         return text === '1' ? <span style={{ color: 'blue' }}>有</span> : '无';
-      }
+      },
     },
     {
       title: '回复附件',
       dataIndex: 'needFileReply',
-      render: map01toNY
+      render: map01toNY,
     },
     {
       title: '创建时间',
       dataIndex: 'createTime',
-      render: formatDate
+      render: formatDate,
     },
     {
       title: '截止时间',
       dataIndex: 'endTime',
-      render: formatDate
-    }
+      render: formatDate,
+    },
   ];
 
   const getCreatedThings = (current, size) => {
@@ -105,16 +111,16 @@ const ThingCreatedList = ({ history }) => {
     http
       .post('/thing/createdList', {
         pageCurrent: current,
-        pageSize: size
+        pageSize: size,
       })
-      .then(res => {
+      .then((res) => {
         if (res.data.code === 0) {
           setPageTotal(res.data.data.total);
           setDataSource(res.data.data.records);
           setLoading(false);
         }
       })
-      .catch(err => {
+      .catch((err) => {
         console.log(err);
       });
   };
@@ -139,11 +145,11 @@ const ThingCreatedList = ({ history }) => {
               setPageCurrent(1);
               setPageSize(size);
               getCreatedThings(1, size);
-            }
+            },
           }}
           columns={columns}
           dataSource={dataSource}
-          rowKey={row => row.id}
+          rowKey={(row) => row.id}
         />
       </Card>
     </>

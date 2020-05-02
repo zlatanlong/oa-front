@@ -61,16 +61,19 @@ const ThingJoined = ({ match, userInfo, location }) => {
           setThingFileList(res.data.data.files);
           const qs = res.data.data.questions;
           setQuestions(qs);
-          let tempAnswer = {};
-          qs.forEach((q) => {
-            tempAnswer[q.id] = {
-              count: q.options.length,
-              maxChoose: q.maxChoose,
-              title: q.title,
-            };
-          });
-          setAnswer(tempAnswer);
+          if (qs !== null) {
+            let tempAnswer = {};
+            qs.forEach((q) => {
+              tempAnswer[q.id] = {
+                count: q.options.length,
+                maxChoose: q.maxChoose,
+                title: q.title,
+              };
+            });
+            setAnswer(tempAnswer);
+          }
 
+          console.log(1);
           if (res.data.data.thing.needFinish === '1') {
             getIfFinished();
           } else {
@@ -358,15 +361,17 @@ const ThingJoined = ({ match, userInfo, location }) => {
           {Array.isArray(thingFileList) && thingFileList.length > 0 && (
             <ThingFileShow files={thingFileList} />
           )}
-          {thing.needFinish === '1' && ifFinished === false && (
-            <div>
-              <Title level={4}>问题：</Title>
-              <ThingQuestionsShow
-                questions={questions}
-                handleAnswerChange={handleAnswerChange}
-              />
-            </div>
-          )}
+          {thing.needFinish === '1' &&
+            ifFinished === false &&
+            questions !== null && (
+              <div>
+                <Title level={4}>问题：</Title>
+                <ThingQuestionsShow
+                  questions={questions}
+                  handleAnswerChange={handleAnswerChange}
+                />
+              </div>
+            )}
         </Typography>
         {thing.needFinish === '1' && ifFinished === false && (
           <div>
@@ -407,7 +412,9 @@ const ThingJoined = ({ match, userInfo, location }) => {
             {Array.isArray(finishFileList) && finishFileList.length > 0 && (
               <ThingFileShow files={finishFileList} />
             )}
-            <ThingAnswer questions={finishedQuestions} />
+            {finishedQuestions !== null && (
+              <ThingAnswer questions={finishedQuestions} />
+            )}
           </div>
         )}
       </Card>

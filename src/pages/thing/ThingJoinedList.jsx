@@ -18,15 +18,19 @@ const ThingJoinedList = ({ history }) => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  const formatDate = date => {
+  const formatDate = (date) => {
     if (date === null) {
       return '无';
     }
     return moment(date).format('M月D日 HH:mm');
   };
 
-  const map01toNY = text => {
-    return text === '1' ? '是' : <span style={{ color: 'red' }}>否</span>;
+  const map01toNY = (text) => {
+    return text === '1' ? (
+      <span style={{ color: 'green' }}>否</span>
+    ) : (
+      <span style={{ color: 'red' }}>否</span>
+    );
   };
 
   const columns = [
@@ -41,20 +45,20 @@ const ThingJoinedList = ({ history }) => {
           onClick={() => history.push(`/thing/joined/${record.id}`)}>
           {text}
         </Button>
-      )
+      ),
     },
     {
       title: '发起人',
-      dataIndex: 'realName'
+      dataIndex: 'realName',
     },
     {
       title: '标签',
-      dataIndex: 'tagName'
+      dataIndex: 'tagName',
     },
     {
       title: '阅读',
       dataIndex: 'hasRead',
-      render: map01toNY
+      render: map01toNY,
     },
     {
       title: '完成',
@@ -64,25 +68,36 @@ const ThingJoinedList = ({ history }) => {
           return '不需要';
         }
         return map01toNY(text);
-      }
+      },
     },
     {
       title: '附件',
-      dataIndex: 'needFinish',
-      render: text => {
+      dataIndex: 'needFileReply',
+      render: (text) => {
         return text === '1' ? <span style={{ color: 'blue' }}>有</span> : '无';
-      }
+      },
+    },
+    {
+      title: '问答',
+      dataIndex: 'needAnswer',
+      render: (text) => {
+        return text === '1' ? (
+          <span style={{ color: 'orange' }}>有</span>
+        ) : (
+          '无'
+        );
+      },
     },
     {
       title: '创建时间',
       dataIndex: 'createTime',
-      render: formatDate
+      render: formatDate,
     },
     {
       title: '截止时间',
       dataIndex: 'endTime',
-      render: formatDate
-    }
+      render: formatDate,
+    },
   ];
 
   const getJoinedThings = (current, size, data) => {
@@ -91,26 +106,26 @@ const ThingJoinedList = ({ history }) => {
       .post('/thing/joinedList', {
         pageCurrent: current,
         pageSize: size,
-        data
+        data,
       })
-      .then(res => {
+      .then((res) => {
         if (res.data.code === 0) {
           setPageTotal(res.data.data.total);
-          const tempData = res.data.data.records.map(record => ({
+          const tempData = res.data.data.records.map((record) => ({
             ...record.thing,
             hasFinished: record.hasFinished,
-            hasRead: record.hasRead
+            hasRead: record.hasRead,
           }));
           setDataSource(tempData);
           setLoading(false);
         }
       })
-      .catch(err => {
+      .catch((err) => {
         console.log(err);
       });
   };
 
-  const onFinish = values => {
+  const onFinish = (values) => {
     getJoinedThings(1, 10, values);
     setPageCurrent(1);
     setPageSize(10);
@@ -133,21 +148,21 @@ const ThingJoinedList = ({ history }) => {
               ` 共 ${total} 条，第 ${range[0]}-${range[1]} 条`,
             onChange: (page, pageSize) => {
               setPageCurrent(page);
-              form.validateFields().then(values => {
+              form.validateFields().then((values) => {
                 getJoinedThings(page, pageSize, values);
               });
             },
             onShowSizeChange: (page, size) => {
               setPageCurrent(1);
               setPageSize(size);
-              form.validateFields().then(values => {
+              form.validateFields().then((values) => {
                 getJoinedThings(1, size, values);
               });
-            }
+            },
           }}
           columns={columns}
           dataSource={dataSource}
-          rowKey={row => row.id}
+          rowKey={(row) => row.id}
         />
       </Card>
     </div>

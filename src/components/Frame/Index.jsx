@@ -7,8 +7,7 @@ import {
   SmileOutlined,
   TagsOutlined,
   TeamOutlined,
-  UserOutlined,
-  UserSwitchOutlined
+  UserSwitchOutlined,
 } from '@ant-design/icons';
 import { Avatar, Dropdown, Layout, Menu, message, Space } from 'antd';
 import { connect } from 'dva';
@@ -29,19 +28,19 @@ function Index(props) {
   const [roleRoutes, setRoleRoutes] = useState([]);
   const [tagRoutes, setTagRoutes] = useState([]);
   const [userOperateRoutes, setUserOperateRoutes] = useState([]);
-  const [testRoutes, setTestRoutes] = useState([]);
+  // const [testRoutes, setTestRoutes] = useState([]);
 
   useEffect(() => {
     let userPermissionUrlSet = [];
     let permissionSet = [...props.userInfo.info.permissionSet];
-    permissionSet.forEach(permission => {
+    permissionSet.forEach((permission) => {
       userPermissionUrlSet.push(permission.frontRoute);
     });
     // 从 userPermissionSet 中 解除对应route的受控
     for (const key in routesGroup) {
       if (routesGroup.hasOwnProperty(key)) {
         const routes = routesGroup[key];
-        routes.forEach(route => {
+        routes.forEach((route) => {
           if (userPermissionUrlSet.indexOf(route.path) !== -1) {
             route.controlled = false;
           }
@@ -49,57 +48,54 @@ function Index(props) {
       }
     }
     setThingRoutes(
-      routesGroup.thingRoutes.filter(route => route.isShow && !route.controlled)
+      routesGroup.thingRoutes.filter(
+        (route) => route.isShow && !route.controlled
+      )
     );
     setTeamRoutes(
-      routesGroup.teamRoutes.filter(route => route.isShow && !route.controlled)
+      routesGroup.teamRoutes.filter(
+        (route) => route.isShow && !route.controlled
+      )
     );
     setRoleRoutes(
-      routesGroup.roleRoutes.filter(route => route.isShow && !route.controlled)
+      routesGroup.roleRoutes.filter(
+        (route) => route.isShow && !route.controlled
+      )
     );
     setTagRoutes(
-      routesGroup.tagRoutes.filter(route => route.isShow && !route.controlled)
+      routesGroup.tagRoutes.filter((route) => route.isShow && !route.controlled)
     );
     setUserOperateRoutes(
       routesGroup.userOperateRoutes.filter(
-        route => route.isShow && !route.controlled
+        (route) => route.isShow && !route.controlled
       )
     );
-    setTestRoutes(
-      routesGroup.testRoutes.filter(route => route.isShow && !route.controlled)
-    );
-
-    // 测试阶段
-    // setThingRoutes(routesGroup.thingRoutes.filter(route => route.isShow));
-    // setTeamRoutes(routesGroup.teamRoutes.filter(route => route.isShow));
-    // setRoleRoutes(routesGroup.roleRoutes.filter(route => route.isShow));
-    // setTagRoutes(routesGroup.tagRoutes.filter(route => route.isShow));
-    // setUserOperateRoutes(
-    //   routesGroup.userOperateRoutes.filter(route => route.isShow)
+    // setTestRoutes(
+    //   routesGroup.testRoutes.filter(route => route.isShow && !route.controlled)
     // );
-    // setTestRoutes(routesGroup.testRoutes.filter(route => route.isShow));
+
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   // 鼠标滑到右上角用户上时候的弹出菜单
   const popMenu = (
     <Menu
-      onClick={p => {
+      onClick={(p) => {
         if (p.key === 'logOut') {
           http
             .post('/user/logout')
-            .then(res => {
+            .then((res) => {
               if (res.data.code === 0) {
                 // 一定要先清除token
                 clearToken();
                 props.history.push('/login');
                 props.dispatch({
                   type: 'userInfo/save',
-                  isLogined: false
+                  isLogined: false,
                 });
               }
             })
-            .catch(err => {
+            .catch((err) => {
               console.log(err);
             });
         } else if (p.key === 'info') {
@@ -156,11 +152,11 @@ function Index(props) {
                   事务管理
                 </span>
               }>
-              {thingRoutes.map(route => {
+              {thingRoutes.map((route) => {
                 return (
                   <Menu.Item
                     key={route.path}
-                    onClick={p => props.history.push(p.key)}>
+                    onClick={(p) => props.history.push(p.key)}>
                     {route.title}
                   </Menu.Item>
                 );
@@ -175,11 +171,11 @@ function Index(props) {
                   标签管理
                 </span>
               }>
-              {tagRoutes.map(route => {
+              {tagRoutes.map((route) => {
                 return (
                   <Menu.Item
                     key={route.path}
-                    onClick={p => props.history.push(p.key)}>
+                    onClick={(p) => props.history.push(p.key)}>
                     {route.title}
                   </Menu.Item>
                 );
@@ -194,11 +190,11 @@ function Index(props) {
                   小组管理
                 </span>
               }>
-              {teamRoutes.map(route => {
+              {teamRoutes.map((route) => {
                 return (
                   <Menu.Item
                     key={route.path}
-                    onClick={p => props.history.push(p.key)}>
+                    onClick={(p) => props.history.push(p.key)}>
                     {route.title}
                   </Menu.Item>
                 );
@@ -214,11 +210,11 @@ function Index(props) {
                     用户管理
                   </span>
                 }>
-                {userOperateRoutes.map(route => {
+                {userOperateRoutes.map((route) => {
                   return (
                     <Menu.Item
                       key={route.path}
-                      onClick={p => props.history.push(p.key)}>
+                      onClick={(p) => props.history.push(p.key)}>
                       {route.title}
                     </Menu.Item>
                   );
@@ -235,11 +231,11 @@ function Index(props) {
                     角色权限管理
                   </span>
                 }>
-                {roleRoutes.map(route => {
+                {roleRoutes.map((route) => {
                   return (
                     <Menu.Item
                       key={route.path}
-                      onClick={p => props.history.push(p.key)}>
+                      onClick={(p) => props.history.push(p.key)}>
                       {route.title}
                     </Menu.Item>
                   );
@@ -247,7 +243,7 @@ function Index(props) {
               </SubMenu>
             )}
             {/* 测试用 */}
-            <SubMenu
+            {/* <SubMenu
               key='testRoutes'
               title={
                 <span>
@@ -264,7 +260,7 @@ function Index(props) {
                   </Menu.Item>
                 );
               })}
-            </SubMenu>
+            </SubMenu> */}
           </Menu>
         </Sider>
         <Layout style={{ padding: '0' }}>
@@ -273,7 +269,7 @@ function Index(props) {
             style={{
               padding: '40px 30px',
               margin: 0,
-              minHeight: 280
+              minHeight: 280,
             }}>
             {props.children}
           </Content>

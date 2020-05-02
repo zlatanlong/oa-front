@@ -12,25 +12,24 @@ import UserEdit from './pages/user/UserEdit';
 import TeamInfo from './pages/team/TeamInfo';
 import Tags from './pages/tag/Tags';
 import TagEdit from './pages/tag/TagEdit';
+import TagEditPublic from './pages/tag/TagEditPublic';
 import ThingAdd from './pages/thing/ThingAdd';
 import ThingJoinedList from './pages/thing/ThingJoinedList';
 import ThingJoined from './pages/thing/ThingJoined';
 import ThingCreatedList from './pages/thing/ThingCreatedList';
 import ThingCreated from './pages/thing/ThingCreated';
 import ThingUserReply from './pages/thing/ThingUserReply';
-import TagEditPublic from './pages/tag/TagEditPublic';
 import ThingAddPersonal from './pages/thing/ThingAddPersonal';
-import ThingAddQuestion from './components/Thing/ThingAddQuestion';
 
 export const mainRoutes = [
   {
     path: '/login',
-    component: Login
+    component: Login,
   },
   {
     path: '/404',
-    component: PageNotFound
-  }
+    component: PageNotFound,
+  },
 ];
 
 export const thingRoutes = [
@@ -39,14 +38,14 @@ export const thingRoutes = [
     component: ThingJoinedList,
     exact: true,
     isShow: true,
-    title: '日程表'
+    title: '日程表',
   },
   {
     path: '/thing/joined/:id',
     component: ThingJoined,
     exact: true,
     isShow: false,
-    title: '收到事务详情页'
+    title: '收到事务详情页',
   },
   {
     path: '/thing/edit',
@@ -54,7 +53,7 @@ export const thingRoutes = [
     exact: true,
     isShow: true,
     controlled: true,
-    title: '创建事务'
+    title: '创建事务',
   },
   {
     path: '/thing/createdlist',
@@ -62,7 +61,7 @@ export const thingRoutes = [
     exact: true,
     isShow: true,
     controlled: true,
-    title: '已创建事务列表'
+    title: '已创建事务列表',
   },
   {
     path: '/thing/created/:id',
@@ -70,7 +69,7 @@ export const thingRoutes = [
     exact: true,
     isShow: false,
     controlled: true,
-    title: '已创建事务详情'
+    title: '已创建事务详情',
   },
   {
     path: '/thing/created/:thingId/:userId',
@@ -78,15 +77,15 @@ export const thingRoutes = [
     exact: true,
     isShow: false,
     controlled: true,
-    title: '某人已完成事务详情'
+    title: '某人已完成事务详情',
   },
   {
     path: '/thing/personalEdit',
     component: ThingAddPersonal,
     exact: true,
     isShow: true,
-    title: '创建个人事务'
-  }
+    title: '创建个人事务',
+  },
 ];
 
 export const teamRoutes = [
@@ -95,7 +94,7 @@ export const teamRoutes = [
     component: TeamJoinedList,
     exact: true,
     isShow: true,
-    title: '我的小组'
+    title: '我的小组',
   },
   {
     path: '/team/edit',
@@ -103,7 +102,7 @@ export const teamRoutes = [
     exact: true,
     isShow: true,
     controlled: true,
-    title: '创建小组'
+    title: '创建小组',
   },
   {
     path: '/team/createdlist',
@@ -111,14 +110,14 @@ export const teamRoutes = [
     exact: true,
     isShow: true,
     controlled: true,
-    title: '已创建小组列表'
+    title: '已创建小组列表',
   },
   {
     path: '/team/info/:id',
     component: TeamInfo,
     exact: true,
-    isShow: false
-  }
+    isShow: false,
+  },
 ];
 
 export const roleRoutes = [
@@ -128,7 +127,7 @@ export const roleRoutes = [
     exact: true,
     isShow: true,
     controlled: true,
-    title: '角色管理'
+    title: '角色管理',
   },
   {
     path: '/sys/role/:id',
@@ -136,8 +135,8 @@ export const roleRoutes = [
     exact: true,
     isShow: false,
     controlled: true,
-    title: '修改角色权限'
-  }
+    title: '修改角色权限',
+  },
 ];
 
 export const tagRoutes = [
@@ -146,14 +145,14 @@ export const tagRoutes = [
     component: Tags,
     exact: true,
     isShow: true,
-    title: '可用标签'
+    title: '可用标签',
   },
   {
     path: '/tag/edit',
     component: TagEdit,
     exact: true,
     isShow: false,
-    title: '创建私有标签'
+    title: '创建私有标签',
   },
   {
     path: '/tag/editpub',
@@ -161,8 +160,8 @@ export const tagRoutes = [
     exact: true,
     isShow: true,
     controlled: true,
-    title: '创建共有标签'
-  }
+    title: '创建共有标签',
+  },
 ];
 
 export const userOperateRoutes = [
@@ -172,7 +171,7 @@ export const userOperateRoutes = [
     exact: true,
     isShow: true,
     controlled: true,
-    title: '添加用户'
+    title: '添加用户',
   },
   {
     path: '/user/list',
@@ -180,7 +179,7 @@ export const userOperateRoutes = [
     exact: true,
     isShow: true,
     controlled: true,
-    title: '所有用户'
+    title: '所有用户',
   },
   {
     path: '/user/edit/:id',
@@ -188,8 +187,8 @@ export const userOperateRoutes = [
     exact: true,
     isShow: false,
     controlled: true,
-    title: '更新用户信息'
-  }
+    title: '更新用户信息',
+  },
 ];
 
 export const userRoutes = [
@@ -198,19 +197,19 @@ export const userRoutes = [
     component: PersonalInfo,
     exact: true,
     isShow: false,
-    title: '个人信息'
-  }
+    title: '个人信息',
+  },
 ];
 
-export const testRoutes = [
-  {
-    path: '/test/Vote',
-    component: ThingAddQuestion,
-    exact: true,
-    isShow: true,
-    title: '投票模块'
-  }
-];
+// export const testRoutes = [
+//   {
+//     path: '/test/Vote',
+//     component: ThingAddQuestion,
+//     exact: true,
+//     isShow: true,
+//     title: '投票模块'
+//   }
+// ];
 
 export const adminRoutes = [
   ...thingRoutes,
@@ -219,7 +218,7 @@ export const adminRoutes = [
   ...tagRoutes,
   ...userOperateRoutes,
   ...userRoutes,
-  ...testRoutes
+  // ...testRoutes
 ];
 export const routesGroup = {
   thingRoutes,
@@ -228,5 +227,5 @@ export const routesGroup = {
   tagRoutes,
   userOperateRoutes,
   userRoutes,
-  testRoutes
+  // testRoutes
 };

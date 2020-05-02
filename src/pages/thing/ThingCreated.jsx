@@ -6,6 +6,7 @@ import ThingSearchForm from '../../components/Thing/ThingSearchForm';
 import http from '../../utils/axios';
 import ThingFileShow from '../../components/Thing/ThingFileShow';
 import BreadNav from '../../components/Frame/BreadNav';
+import ThingAnswerResult from '../../components/Thing/ThingAnswerResult';
 
 const { Title, Paragraph } = Typography;
 
@@ -21,6 +22,7 @@ const ThingCreated = ({ match, history, location }) => {
   const [readCount, setReadCount] = useState(0);
   const [finishedCount, setFinishedCount] = useState(0);
   const [receivers, setReceivers] = useState([]);
+  const [questions, setQuestions] = useState([]);
 
   useEffect(() => {
     getThingInfo(pageCurrent, pageSize);
@@ -33,9 +35,9 @@ const ThingCreated = ({ match, history, location }) => {
       .post('/thing/created/get', {
         pageCurrent,
         pageSize,
-        data: { ...data, thingId: match.params.id }
+        data: { ...data, thingId: match.params.id },
       })
-      .then(res => {
+      .then((res) => {
         if (res.data.code === 0) {
           const data = res.data.data;
           setThing(data.thing);
@@ -45,15 +47,16 @@ const ThingCreated = ({ match, history, location }) => {
           setReceivers(data.thingReceiversPage.records);
           setThingFileList(data.files);
           setPageTotal(data.thingReceiversPage.total);
+          setQuestions(data.questions);
           setLoading(false);
         }
       })
-      .catch(err => {
+      .catch((err) => {
         console.log(err);
       });
   };
 
-  const map01toNY = text => {
+  const map01toNY = (text) => {
     return text === '1' ? '是' : <span style={{ color: 'red' }}>否</span>;
   };
 
@@ -77,13 +80,13 @@ const ThingCreated = ({ match, history, location }) => {
           );
         }
         return text;
-      }
+      },
     },
     {
       title: '是否阅读',
       dataIndex: 'hasRead',
-      render: map01toNY
-    }
+      render: map01toNY,
+    },
   ];
 
   const columns =
@@ -93,12 +96,12 @@ const ThingCreated = ({ match, history, location }) => {
           {
             title: '是否完成',
             dataIndex: 'hasFinished',
-            render: map01toNY
-          }
+            render: map01toNY,
+          },
         ]
       : commonColumns;
 
-  const onFinish = value => {
+  const onFinish = (value) => {
     getThingInfo(1, 20, value);
   };
 
@@ -107,7 +110,7 @@ const ThingCreated = ({ match, history, location }) => {
       <BreadNav
         navs={[
           { url: '/thing/createdlist', name: '已创建' },
-          { url: location.pathname, name: thing.title }
+          { url: location.pathname, name: thing.title },
         ]}
       />
       <Card>
@@ -192,6 +195,12 @@ const ThingCreated = ({ match, history, location }) => {
           {Array.isArray(thingFileList) && thingFileList.length > 0 && (
             <ThingFileShow files={thingFileList} />
           )}
+          {questions !== null && (
+            <>
+              <Title level={4}>问答：</Title>
+              <ThingAnswerResult questions={questions} />
+            </>
+          )}
         </Typography>
         <Divider />
         <Title level={4}>完成情况：</Title>
@@ -212,21 +221,21 @@ const ThingCreated = ({ match, history, location }) => {
               ` 共 ${total} 条，第 ${range[0]}-${range[1]} 条`,
             onChange: (page, pageSize) => {
               setPageCurrent(page);
-              form.validateFields().then(values => {
+              form.validateFields().then((values) => {
                 getThingInfo(page, pageSize);
               });
             },
             onShowSizeChange: (page, size) => {
               setPageCurrent(1);
               setPageSize(size);
-              form.validateFields().then(values => {
+              form.validateFields().then((values) => {
                 getThingInfo(1, size, values);
               });
-            }
+            },
           }}
           columns={columns}
           dataSource={receivers}
-          rowKey={row => row.id}
+          rowKey={(row) => row.id}
         />
       </Card>
     </>
