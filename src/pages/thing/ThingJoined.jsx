@@ -2,7 +2,7 @@ import {
   CalendarOutlined,
   TagOutlined,
   UploadOutlined,
-  UserOutlined
+  UserOutlined,
 } from '@ant-design/icons';
 import {
   Button,
@@ -12,7 +12,7 @@ import {
   Input,
   message,
   Typography,
-  Upload
+  Upload,
 } from 'antd';
 import { connect } from 'dva';
 import moment from 'moment';
@@ -21,6 +21,7 @@ import http from '../../utils/axios';
 import ThingFileShow from '../../components/Thing/ThingFileShow';
 import BreadNav from '../../components/Frame/BreadNav';
 import ThingQuestionsShow from '../../components/Thing/ThingQuestionsShow';
+import ThingAnswer from '../../components/Thing/ThingAnswer';
 
 const { Title, Paragraph } = Typography;
 
@@ -34,13 +35,14 @@ const ThingJoined = ({ match, userInfo, location }) => {
   const [uploadFileList, setUploadFileList] = useState([]);
   const [finishFileList, setFinishFileList] = useState([]);
   const [answer, setAnswer] = useState({});
+  const [finishedQuestions, setFinishedQuestions] = useState([]);
 
   const layout = {
     labelCol: { span: 4 },
-    wrapperCol: { span: 8 }
+    wrapperCol: { span: 8 },
   };
   const tailLayout = {
-    wrapperCol: { offset: 4, span: 16 }
+    wrapperCol: { offset: 4, span: 16 },
   };
 
   useEffect(() => {
@@ -51,20 +53,20 @@ const ThingJoined = ({ match, userInfo, location }) => {
   const getThingInfo = () => {
     http
       .post('/thing/joined/get', {
-        id: match.params.id
+        id: match.params.id,
       })
-      .then(res => {
+      .then((res) => {
         if (res.data.code === 0) {
           setThing(res.data.data.thing);
           setThingFileList(res.data.data.files);
           const qs = res.data.data.questions;
           setQuestions(qs);
           let tempAnswer = {};
-          qs.forEach(q => {
+          qs.forEach((q) => {
             tempAnswer[q.id] = {
               count: q.options.length,
               maxChoose: q.maxChoose,
-              title: q.title
+              title: q.title,
             };
           });
           setAnswer(tempAnswer);
@@ -76,7 +78,7 @@ const ThingJoined = ({ match, userInfo, location }) => {
           }
         }
       })
-      .catch(err => {
+      .catch((err) => {
         console.log(err);
       });
   };
@@ -84,9 +86,9 @@ const ThingJoined = ({ match, userInfo, location }) => {
   const getIfFinished = () => {
     http
       .post('/thing/ifFinished', {
-        id: match.params.id
+        id: match.params.id,
       })
-      .then(res => {
+      .then((res) => {
         if (res.data.code === 0) {
           setIfFinished(res.data.data);
           if (res.data.data) {
@@ -96,7 +98,7 @@ const ThingJoined = ({ match, userInfo, location }) => {
           }
         }
       })
-      .catch(err => {
+      .catch((err) => {
         console.log(err);
       });
   };
@@ -107,16 +109,17 @@ const ThingJoined = ({ match, userInfo, location }) => {
         thingId: parseInt(match.params.id, 10),
         // userId: userInfo.info.id
         // todo
-        userId: 6
+        userId: 6,
       })
-      .then(res => {
+      .then((res) => {
         if (res.data.code === 0) {
           setThingReceiver(res.data.data.thingReceiver);
           setFinishFileList(res.data.data.files);
+          setFinishedQuestions(res.data.data.questions);
           setLoading(false);
         }
       })
-      .catch(err => {
+      .catch((err) => {
         console.log(err);
       });
   };
@@ -149,14 +152,14 @@ const ThingJoined = ({ match, userInfo, location }) => {
     return true;
   };
 
-  const onFinish = values => {
+  const onFinish = (values) => {
     if (validFinish()) {
       let data = new FormData();
       data.append('thingId', match.params.id);
       if (values.content) {
         data.append('content', values.content);
       }
-      uploadFileList.forEach(file => {
+      uploadFileList.forEach((file) => {
         data.append('files', file);
       });
       let answers = [];
@@ -167,14 +170,14 @@ const ThingJoined = ({ match, userInfo, location }) => {
             case '1':
               answers.push({
                 questionId: qId,
-                questionOptionId: question.optionId
+                questionOptionId: question.optionId,
               });
               break;
             case '2':
-              question.optionIds.forEach(id => {
+              question.optionIds.forEach((id) => {
                 answers.push({
                   questionId: qId,
-                  questionOptionId: id
+                  questionOptionId: id,
                 });
               });
               break;
@@ -185,7 +188,7 @@ const ThingJoined = ({ match, userInfo, location }) => {
                   answers.push({
                     questionId: qId,
                     questionOptionId: oid,
-                    score
+                    score,
                   });
                 }
               }
@@ -197,7 +200,7 @@ const ThingJoined = ({ match, userInfo, location }) => {
                   answers.push({
                     questionId: qId,
                     questionOptionId: oid,
-                    inputText
+                    inputText,
                   });
                 }
               }
@@ -210,36 +213,36 @@ const ThingJoined = ({ match, userInfo, location }) => {
       data.append('answersJSON', JSON.stringify(answers));
       const config = {
         headers: {
-          'Content-Type': 'multipart/form-data'
-        }
+          'Content-Type': 'multipart/form-data',
+        },
       };
       http
         .post('/thing/finish', data, config)
-        .then(res => {
+        .then((res) => {
           if (res.data.code === 0) {
             setIfFinished(true);
             getFinishedThing();
             message.success('回复成功！');
           }
         })
-        .catch(err => {
+        .catch((err) => {
           console.log(err);
         });
     }
   };
 
   const fileUploadProps = {
-    onRemove: file => {
+    onRemove: (file) => {
       const index = uploadFileList.indexOf(file);
       const newFileList = uploadFileList.slice();
       newFileList.splice(index, 1);
       setUploadFileList(newFileList);
     },
-    beforeUpload: file => {
+    beforeUpload: (file) => {
       setUploadFileList([...uploadFileList, file]);
       return false;
     },
-    fileList: uploadFileList
+    fileList: uploadFileList,
   };
 
   const handleAnswerChange = (question, value) => {
@@ -284,7 +287,7 @@ const ThingJoined = ({ match, userInfo, location }) => {
       <BreadNav
         navs={[
           { url: '/thing/joinedlist', name: '日程表' },
-          { url: location.pathname, name: thing.title }
+          { url: location.pathname, name: thing.title },
         ]}
       />
       <Card loading={loading}>
@@ -355,12 +358,15 @@ const ThingJoined = ({ match, userInfo, location }) => {
           {Array.isArray(thingFileList) && thingFileList.length > 0 && (
             <ThingFileShow files={thingFileList} />
           )}
-          <Title level={4}>问题：</Title>
-          <ThingQuestionsShow
-            questions={questions}
-            handleAnswerChange={handleAnswerChange}
-            answer={answer}
-          />
+          {thing.needFinish === '1' && ifFinished === false && (
+            <div>
+              <Title level={4}>问题：</Title>
+              <ThingQuestionsShow
+                questions={questions}
+                handleAnswerChange={handleAnswerChange}
+              />
+            </div>
+          )}
         </Typography>
         {thing.needFinish === '1' && ifFinished === false && (
           <div>
@@ -401,6 +407,7 @@ const ThingJoined = ({ match, userInfo, location }) => {
             {Array.isArray(finishFileList) && finishFileList.length > 0 && (
               <ThingFileShow files={finishFileList} />
             )}
+            <ThingAnswer questions={finishedQuestions} />
           </div>
         )}
       </Card>

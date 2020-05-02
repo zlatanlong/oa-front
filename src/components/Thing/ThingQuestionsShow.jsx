@@ -2,7 +2,7 @@ import { Checkbox, Col, Input, Radio, Row, message } from 'antd';
 import React, { useState } from 'react';
 import { replyTypes } from './ThingAddQuestion';
 
-const ThingQuestionsShow = ({ questions, handleAnswerChange, answer }) => {
+const ThingQuestionsShow = ({ questions, handleAnswerChange }) => {
   const [checked, setChecked] = useState([]);
 
   return (
@@ -17,7 +17,7 @@ const ThingQuestionsShow = ({ questions, handleAnswerChange, answer }) => {
                 </h5>
               </Col>
               <Col offset={0} span={16}>
-                {replyTypes.map(type => {
+                {replyTypes.map((type) => {
                   if (type.value === question.replyType) {
                     if (question.replyType === '2') {
                       return (
@@ -41,10 +41,10 @@ const ThingQuestionsShow = ({ questions, handleAnswerChange, answer }) => {
                     case '1':
                       return (
                         <Radio.Group
-                          onChange={e =>
+                          onChange={(e) =>
                             handleAnswerChange(question, e.target.value)
                           }>
-                          {question.options.map(option => (
+                          {question.options.map((option) => (
                             <Radio key={option.id} value={option.id}>
                               {option.content}
                             </Radio>
@@ -54,20 +54,20 @@ const ThingQuestionsShow = ({ questions, handleAnswerChange, answer }) => {
                     case '2':
                       return (
                         <Checkbox.Group
-                          onChange={value => {
+                          onChange={(value) => {
                             if (value.length > question.maxChoose) {
                               message.warning(`最多选${question.maxChoose}项`);
                               return false;
                             } else {
-                              setChecked(value.map(num => num.toString()));
+                              setChecked(value.map((num) => num.toString()));
                               handleAnswerChange(
                                 question,
-                                value.map(str => parseInt(str, 10))
+                                value.map((str) => parseInt(str, 10))
                               );
                             }
                           }}
                           value={checked}>
-                          {question.options.map(option => (
+                          {question.options.map((option) => (
                             <Checkbox
                               key={option.id}
                               value={option.id.toString()}>
@@ -79,7 +79,7 @@ const ThingQuestionsShow = ({ questions, handleAnswerChange, answer }) => {
                     case '3':
                       return (
                         <div>
-                          {question.options.map(option => (
+                          {question.options.map((option) => (
                             <Row key={option.id} style={{ margin: '2px 0' }}>
                               <Col span={4}>
                                 <span>{option.content}：</span>
@@ -88,10 +88,10 @@ const ThingQuestionsShow = ({ questions, handleAnswerChange, answer }) => {
                                 <Input
                                   size='small'
                                   type='number'
-                                  onChange={e => {
+                                  onChange={(e) => {
                                     handleAnswerChange(question, {
                                       optionId: option.id,
-                                      score: e.target.value
+                                      score: e.target.value,
                                     });
                                   }}
                                 />
@@ -103,7 +103,7 @@ const ThingQuestionsShow = ({ questions, handleAnswerChange, answer }) => {
                     case '4':
                       return (
                         <div>
-                          {question.options.map(option => (
+                          {question.options.map((option) => (
                             <Row key={option.id} style={{ margin: '2px 0' }}>
                               <Col span={4}>
                                 <span>{option.content}：</span>
@@ -111,10 +111,10 @@ const ThingQuestionsShow = ({ questions, handleAnswerChange, answer }) => {
                               <Col span={16}>
                                 <Input
                                   size='small'
-                                  onChange={e => {
+                                  onChange={(e) => {
                                     handleAnswerChange(question, {
                                       optionId: option.id,
-                                      inputText: e.target.value
+                                      inputText: e.target.value,
                                     });
                                   }}
                                 />
