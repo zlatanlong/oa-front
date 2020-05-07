@@ -10,15 +10,16 @@ function RouterConfig({ history }) {
     <ConfigProvider locale={zhCN}>
       <Router history={history}>
         <Switch>
-          {mainRoutes.map(route => {
-            return (
-              <Route key={route.path} {...route} />
-            )
+          {mainRoutes.map((route) => {
+            return <Route key={route.path} {...route} />;
           })}
           {/* 子路由 */}
-          <Route path="/" render={routeProps => <IndexPage {...routeProps} />} />
+          <Route
+            path='/'
+            render={(routeProps) => <IndexPage {...routeProps} />}
+          />
           {/* <Redirect to="/admin" from="/" /> */}
-          <Redirect to="/404" />
+          <Redirect to='/404' />
         </Switch>
       </Router>
     </ConfigProvider>

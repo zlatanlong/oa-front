@@ -293,7 +293,7 @@ const ThingJoined = ({ match, userInfo, location }) => {
           { url: location.pathname, name: thing.title },
         ]}
       />
-      <Card loading={loading}>
+      <Card loading={loading} style={{ height: '100%' }}>
         <Typography>
           <Title level={2}>{thing.title}</Title>
           <Paragraph>

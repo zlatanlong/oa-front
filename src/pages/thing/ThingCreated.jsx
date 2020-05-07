@@ -113,7 +113,7 @@ const ThingCreated = ({ match, history, location }) => {
           { url: location.pathname, name: thing.title },
         ]}
       />
-      <Card>
+      <Card style={{ height: '100%' }}>
         <Typography>
           <Title level={2}>{thing.title}</Title>
           <Skeleton

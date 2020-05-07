@@ -1,5 +1,5 @@
-import { Checkbox, Col, Input, Radio, Row, message } from 'antd';
-import React, { useState } from 'react';
+import { Checkbox, Col, Input, Radio, Row } from 'antd';
+import React from 'react';
 import { replyTypes } from './ThingAddQuestion';
 
 const ThingAnswerResult = ({ questions }) => {

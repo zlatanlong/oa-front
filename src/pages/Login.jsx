@@ -14,44 +14,55 @@ class Login extends Component {
 
   componentDidMount() {
     let token = getToken();
-    console.log('token', token);
     if (token) {
       this.login(token);
     }
   }
 
-  login = values => {
+  getParams = (key) => {
+    let paramStrs = this.props.location.search.substr(1).split('&');
+    let params = {};
+    paramStrs.forEach(
+      (paramStr) => (params[paramStr.split('=')[0]] = paramStr.split('=')[1])
+    );
+    return params[key];
+  };
+
+  login = (values) => {
     this.setState({ loading: true });
     http
       .post('/user/login', values)
-      .then(res => {
+      .then((res) => {
         if (res.data.code === 0) {
           message.success('登录成功');
           setToken(values);
           this.saveUserInfoToDva(res.data.data);
-          console.log(this.props.history);
-          this.props.history.push('/u/info');
+          if (this.getParams('state') === 'bind') {
+            this.props.history.push(`/u/wxbind${this.props.location.search}`);
+          } else {
+            this.props.history.push('/u/info');
+          }
         } else {
           this.setState({ loading: true });
           message.error(res.data.msg);
         }
       })
-      .catch(err => {
+      .catch((err) => {
         console.log(err);
         this.setState({ loading: true });
         message.error('未知错误');
       });
   };
 
-  onFinish = values => {
+  onFinish = (values) => {
     this.login(values);
   };
 
-  saveUserInfoToDva = value => {
+  saveUserInfoToDva = (value) => {
     this.props.dispatch({
       type: 'userInfo/save',
       isLogined: true,
-      data: value
+      data: value,
     });
   };
 

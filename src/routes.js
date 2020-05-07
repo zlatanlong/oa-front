@@ -20,6 +20,7 @@ import ThingCreatedList from './pages/thing/ThingCreatedList';
 import ThingCreated from './pages/thing/ThingCreated';
 import ThingUserReply from './pages/thing/ThingUserReply';
 import ThingAddPersonal from './pages/thing/ThingAddPersonal';
+import WXbind from './pages/personal/WXbind';
 
 export const mainRoutes = [
   {
@@ -198,6 +199,12 @@ export const userRoutes = [
     exact: true,
     isShow: false,
     title: '个人信息',
+  },
+  {
+    path: '/u/wxbind',
+    component: WXbind,
+    exact: true,
+    isShow: false,
   },
 ];
 

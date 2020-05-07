@@ -1,9 +1,13 @@
 import axios from 'axios';
 
-const http = axios.create({
-  baseURL: 'http://localhost:8080/',
-  withCredentials: true
-});
+const url = {
+  dev: 'http://localhost:8080/',
+  prod: 'https://oa.lclong.top:8081/',
+};
 
+const http = axios.create({
+  baseURL: url.prod,
+  withCredentials: true,
+});
 
 export default http;

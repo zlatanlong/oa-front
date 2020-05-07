@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Steps, Button, Card, message } from 'antd';
 import { connect } from 'dva';
 import ThingAddInfo from '../../components/Thing/ThingAddInfo';
@@ -14,12 +14,19 @@ const { Step } = Steps;
 const ThingAdd = ({ addThing, dispatch, history }) => {
   const [current, setCurrent] = useState(0);
 
+  useEffect(() => {
+    dispatch({
+      type: 'addThing/init',
+    });
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
   const saveThingChange = (value, key) => {
     dispatch({
       type: 'addThing/save',
       payload: {
-        [key]: value
-      }
+        [key]: value,
+      },
     });
   };
 
@@ -27,28 +34,28 @@ const ThingAdd = ({ addThing, dispatch, history }) => {
     {
       key: 1,
       title: '填写基本信息',
-      content: <ThingAddInfo saveThingChange={saveThingChange} />
+      content: <ThingAddInfo saveThingChange={saveThingChange} />,
     },
     {
       key: 2,
       title: '选择标签',
-      content: <ThingAddTag saveThingChange={saveThingChange} />
+      content: <ThingAddTag saveThingChange={saveThingChange} />,
     },
     {
       key: 3,
       title: '选择接收小组/人',
-      content: <ThingAddUsers saveThingChange={saveThingChange} />
+      content: <ThingAddUsers saveThingChange={saveThingChange} />,
     },
     {
       key: 4,
       title: '创建问答',
-      content: <ThingAddQuestion saveThingChange={saveThingChange} />
+      content: <ThingAddQuestion saveThingChange={saveThingChange} />,
     },
     {
       key: 5,
       title: '发布事务',
-      content: <ThingAddShow />
-    }
+      content: <ThingAddShow />,
+    },
   ];
 
   const next = () => {
@@ -59,7 +66,7 @@ const ThingAdd = ({ addThing, dispatch, history }) => {
     setCurrent(current - 1);
   };
 
-  const onChange = cur => {
+  const onChange = (cur) => {
     setCurrent(cur);
   };
 
@@ -112,19 +119,19 @@ const ThingAdd = ({ addThing, dispatch, history }) => {
         formData.append('receiverIds', addThing.receiverIds);
       }
       if (addThing.files.length !== 0) {
-        addThing.files.forEach(file => {
+        addThing.files.forEach((file) => {
           formData.append('files', file);
         });
       }
       formData.append('questionsJSON', JSON.stringify(addThing.questions));
       const config = {
         headers: {
-          'Content-Type': 'multipart/form-data'
-        }
+          'Content-Type': 'multipart/form-data',
+        },
       };
       http
         .post('/thing', formData, config)
-        .then(res => {
+        .then((res) => {
           if (res.data.code === 0) {
             setCurrent(0);
             dispatch({ type: 'addThing/init' });
@@ -134,7 +141,7 @@ const ThingAdd = ({ addThing, dispatch, history }) => {
             message.error(res.data.msg);
           }
         })
-        .catch(err => {
+        .catch((err) => {
           message.error('服务器开小差了');
           console.log(err);
         });
@@ -147,10 +154,10 @@ const ThingAdd = ({ addThing, dispatch, history }) => {
       <Card>
         <Steps current={current} onChange={onChange}>
           {steps
-            .filter(step =>
+            .filter((step) =>
               addThing.showStepKeys.indexOf(step.key) === -1 ? false : true
             )
-            .map(item => (
+            .map((item) => (
               <Step key={item.key} title={item.title} />
             ))}
         </Steps>
@@ -160,7 +167,7 @@ const ThingAdd = ({ addThing, dispatch, history }) => {
           addThing.showStepKeys.indexOf(step.key) === -1 ? false : true
         )[current].content} */}
         {
-          steps.filter(step =>
+          steps.filter((step) =>
             addThing.showStepKeys.indexOf(step.key) === -1 ? false : true
           )[current].content
         }

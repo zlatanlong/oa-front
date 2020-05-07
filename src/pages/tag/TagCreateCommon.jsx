@@ -3,7 +3,7 @@ import PropTypes from 'prop-types';
 import React, { useEffect, useState } from 'react';
 import http from '../../utils/axios';
 
-const TagCreateCommon = ({ history, isPublic }) => {
+const TagCreateCommon = ({ isPublic, history }) => {
   const [tags, setTags] = useState([]);
 
   useEffect(() => {
@@ -13,30 +13,30 @@ const TagCreateCommon = ({ history, isPublic }) => {
   const getAvalibleTags = () => {
     http
       .post('/tag/tags')
-      .then(res => {
+      .then((res) => {
         if (res.data.code === 0) {
           setTags(res.data.data);
         }
       })
-      .catch(err => {
+      .catch((err) => {
         console.log(err);
       });
   };
 
-  const onFinish = values => {
+  const onFinish = (values) => {
     addTag({ ...values, publicState: isPublic ? '1' : '0' });
   };
 
-  const addTag = option => {
+  const addTag = (option) => {
     http
       .post('/tag', option)
-      .then(res => {
+      .then((res) => {
         if (res.data.code === 0) {
           message.success('添加成功！');
           history.push('/tag/list');
         }
       })
-      .catch(err => {
+      .catch((err) => {
         console.log(err);
       });
   };
@@ -83,7 +83,7 @@ const TagCreateCommon = ({ history, isPublic }) => {
 };
 
 TagCreateCommon.propTypes = {
-  isPublic: PropTypes.bool.isRequired
+  isPublic: PropTypes.bool.isRequired,
 };
 
 export default TagCreateCommon;

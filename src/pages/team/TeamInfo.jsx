@@ -6,7 +6,7 @@ import http from '../../utils/axios';
 import UserSearchResult from '../../components/UserSearchResult';
 import BreadNav from '../../components/Frame/BreadNav';
 
-const TeamInfo = props => {
+const TeamInfo = (props) => {
   const [loading, setLoading] = useState(false);
   const pageCurrent = useRef(1);
   const pageSize = useRef(10);
@@ -26,53 +26,54 @@ const TeamInfo = props => {
         pageCurrent: pageCurrent.current,
         pageSize: pageSize.current,
         data: {
-          id: props.match.params.id
-        }
+          id: props.match.params.id,
+        },
       })
-      .then(res => {
+      .then((res) => {
         if (res.data.code === 0) {
           setTeamData(res.data.data);
           setLoading(false);
         }
       })
-      .catch(err => {
+      .catch((err) => {
         console.log(err);
       });
   };
 
   const handleDelMembers = () => {
-    let members = selectedRowKeys.map(key => ({ id: key }));
+    let members = selectedRowKeys.map((key) => ({ id: key }));
     http
       .post('/team/delMember', {
         teamId: props.match.params.id,
-        members
+        members,
       })
-      .then(res => {
+      .then((res) => {
         if (res.data.code === 0) {
-          message.success('已删除！');
+          setSelectedRowKeys([]);
           getPageData();
+          message.success('已删除！');
         }
       })
-      .catch(err => {
+      .catch((err) => {
         console.log(err);
       });
   };
 
   const handleAddMembers = () => {
-    let members = addUserIDs.map(id => ({ id }));
+    let members = addUserIDs.map((id) => ({ id }));
     http
       .post('/team/addMember', {
         teamId: props.match.params.id,
-        members
+        members,
       })
-      .then(res => {
+      .then((res) => {
         if (res.data.code === 0) {
           message.success('添加成功！');
           setSelectedRowKeys([]);
           getPageData();
         }
       })
-      .catch(err => {
+      .catch((err) => {
         console.log(err);
       });
 
@@ -83,7 +84,7 @@ const TeamInfo = props => {
     selectedRowKeys,
     onChange: (selectedRowKeys, selectedRows) => {
       setSelectedRowKeys(selectedRowKeys);
-    }
+    },
   };
 
   const pagination = {
@@ -98,7 +99,7 @@ const TeamInfo = props => {
       pageCurrent.current = 1;
       pageSize.current = size;
       getPageData();
-    }
+    },
   };
 
   return (
@@ -106,7 +107,7 @@ const TeamInfo = props => {
       <BreadNav
         navs={[
           { url: '/team/createdlist', name: '已创建小组' },
-          { url: props.location.pathname, name: `${teamData.teamName}成员：` }
+          { url: props.location.pathname, name: `${teamData.teamName}成员：` },
         ]}
       />
       <Card
@@ -125,7 +126,7 @@ const TeamInfo = props => {
           style={{
             marginBottom: '1rem',
             display: 'flex',
-            justifyContent: 'flex-end'
+            justifyContent: 'flex-end',
           }}>
           <Popconfirm
             title='谨慎：确定删除？'
@@ -151,7 +152,7 @@ const TeamInfo = props => {
           columns={userColomns}
           dataSource={teamData.membersPage.records}
           pagination={pagination}
-          rowKey={record => record.id}
+          rowKey={(record) => record.id}
           rowSelection={rowSelection}
         />
       </Card>
@@ -164,7 +165,7 @@ const TeamInfo = props => {
         }}
         onOk={handleAddMembers}>
         <UserSearchResult
-          getSelectIds={ids => {
+          getSelectIds={(ids) => {
             setAddUserIDs(ids);
           }}
         />

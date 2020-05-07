@@ -36,10 +36,11 @@ function Index(props) {
     permissionSet.forEach((permission) => {
       userPermissionUrlSet.push(permission.frontRoute);
     });
+    let tempRoutesGroup = JSON.parse(JSON.stringify(routesGroup));
     // 从 userPermissionSet 中 解除对应route的受控
-    for (const key in routesGroup) {
-      if (routesGroup.hasOwnProperty(key)) {
-        const routes = routesGroup[key];
+    for (const key in tempRoutesGroup) {
+      if (tempRoutesGroup.hasOwnProperty(key)) {
+        const routes = tempRoutesGroup[key];
         routes.forEach((route) => {
           if (userPermissionUrlSet.indexOf(route.path) !== -1) {
             route.controlled = false;
@@ -48,25 +49,27 @@ function Index(props) {
       }
     }
     setThingRoutes(
-      routesGroup.thingRoutes.filter(
+      tempRoutesGroup.thingRoutes.filter(
         (route) => route.isShow && !route.controlled
       )
     );
     setTeamRoutes(
-      routesGroup.teamRoutes.filter(
+      tempRoutesGroup.teamRoutes.filter(
         (route) => route.isShow && !route.controlled
       )
     );
     setRoleRoutes(
-      routesGroup.roleRoutes.filter(
+      tempRoutesGroup.roleRoutes.filter(
         (route) => route.isShow && !route.controlled
       )
     );
     setTagRoutes(
-      routesGroup.tagRoutes.filter((route) => route.isShow && !route.controlled)
+      tempRoutesGroup.tagRoutes.filter(
+        (route) => route.isShow && !route.controlled
+      )
     );
     setUserOperateRoutes(
-      routesGroup.userOperateRoutes.filter(
+      tempRoutesGroup.userOperateRoutes.filter(
         (route) => route.isShow && !route.controlled
       )
     );
@@ -88,11 +91,11 @@ function Index(props) {
               if (res.data.code === 0) {
                 // 一定要先清除token
                 clearToken();
-                props.history.push('/login');
                 props.dispatch({
                   type: 'userInfo/save',
                   isLogined: false,
                 });
+                props.history.push('/login');
               }
             })
             .catch((err) => {
@@ -121,7 +124,7 @@ function Index(props) {
   );
 
   return (
-    <Layout style={{ minHeight: '100%' }}>
+    <Layout className={style.main}>
       <Header className={style.header}>
         <Space>
           <img src={Logo} alt='logo' className={style.logo} />
@@ -137,7 +140,7 @@ function Index(props) {
         </Dropdown>
       </Header>
       <Layout>
-        <Sider width={200} className='site-layout-background'>
+        <Sider width={200} className={style.sider}>
           <Menu
             mode='inline'
             defaultSelectedKeys={['/admin/thing']}
@@ -264,15 +267,7 @@ function Index(props) {
           </Menu>
         </Sider>
         <Layout style={{ padding: '0' }}>
-          <Content
-            className='site-layout-background'
-            style={{
-              padding: '40px 30px',
-              margin: 0,
-              minHeight: 280,
-            }}>
-            {props.children}
-          </Content>
+          <Content className={style.content}>{props.children}</Content>
         </Layout>
       </Layout>
     </Layout>
