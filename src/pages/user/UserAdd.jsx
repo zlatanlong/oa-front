@@ -23,6 +23,7 @@ const UserAdd = () => {
         res => {
           let workbook = XLSX.read(res, { type: 'buffer', cellHTML: false, });
           let sheet = workbook.Sheets.Sheet1;
+          // console.log(XLSX.utils.sheet_to_json(sheet));
           let tempData = {}; // {1:{A:,B:,}} 指第1行的数据，A列是啥，B列是啥
           let tempColumns = [];
           let tempTableData = [];

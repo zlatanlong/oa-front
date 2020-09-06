@@ -31,3 +31,5 @@ src/components/Frame/Index.jsx 里面的路由取消受控的设置
 ## 4.19
 
 标签相关全部完成
+
+读取EXCEL应该使用XLSX.utils.sheet_to_json，直接生成json。干了

@@ -6,7 +6,7 @@ const url = {
 };
 
 const http = axios.create({
-  baseURL: url.dev,
+  baseURL: url.prod,
   withCredentials: true,
 });
 
