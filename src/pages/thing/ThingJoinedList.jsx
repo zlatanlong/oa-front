@@ -27,7 +27,7 @@ const ThingJoinedList = ({ history }) => {
 
   const map01toNY = (text) => {
     return text === '1' ? (
-      <span style={{ color: 'green' }}>否</span>
+      <span style={{ color: 'green' }}>是</span>
     ) : (
       <span style={{ color: 'red' }}>否</span>
     );
